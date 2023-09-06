@@ -1848,7 +1848,7 @@ input, select, textarea {
 		input[type="email"]:focus,
 		select:focus,
 		textarea:focus {
-			border-color: #4acaa8;
+			border-color: #4a7dca;
 		}
 
 	select {
@@ -2402,7 +2402,7 @@ input, select, textarea {
 			}
 
 			ul.feature-icons li:before {
-				background: #4acaa8;
+				background: #4a7dca;
 				border-radius: 100%;
 				color: #ffffff;
 				display: block;
@@ -2654,8 +2654,8 @@ input, select, textarea {
 
 	.features article {
 		border-top: solid 3px #f4f4f4;
-		margin-bottom: 2.25em;
-		padding-top: 2.25em;
+		margin-bottom: 1em;
+		padding-top: 1.25em;
 	}
 
 		.features article:first-child {
@@ -2667,7 +2667,7 @@ input, select, textarea {
 			display: inline-block;
 			padding-right: 2.5em;
 			vertical-align: middle;
-			width: 48%;
+			width: 40%;
 		}
 
 			.features article .image img {
@@ -2903,7 +2903,7 @@ input, select, textarea {
 		/* Main */
 
 			#main > section > .container {
-				padding: 4em 0 2em 0;
+				padding: 1.5em 0 0.3em 0;
 			}
 
 	}
@@ -3268,7 +3268,7 @@ input, select, textarea {
 		/* List */
 
 			ul.actions {
-				margin: 0 0 2.25em 0;
+				margin: 0 0 1.25em 0;
 			}
 
 				ul.actions li {
