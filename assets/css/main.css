@@ -130,7 +130,12 @@ input, select, textarea {
 	}
 
 	p {
+		font-size: 1em;
 		margin: 0 0 1em 0;
+	}
+
+	li {
+		font-size: 1em;
 	}
 
 	h1, h2, h3, h4, h5, h6 {
@@ -147,8 +152,8 @@ input, select, textarea {
 		}
 
 	h2 {
-		font-size: 2em;
-		line-height: 1.5em;
+		font-size: 1.5em;
+		line-height: 1.0em;
 	}
 
 	h3 {
@@ -162,12 +167,12 @@ input, select, textarea {
 	}
 
 	h5 {
-		font-size: 0.9em;
+		font-size: 0.5em;
 		line-height: 1.5em;
 	}
 
 	h6 {
-		font-size: 0.7em;
+		font-size: 0.5em;
 		line-height: 1.5em;
 	}
 
