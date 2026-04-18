@@ -191,17 +191,17 @@ input, select, textarea {
 	hr {
 		border: 0;
 		border-bottom: solid 2px #f4f4f4;
-		margin: 2.25em 0;
+		margin: 1.25em 0;
 	}
 
 		hr.major {
-			margin: 3.375em 0;
+			margin: 2em 0;
 		}
 
 	blockquote {
 		border-left: solid 8px #e4e4e4;
 		font-style: italic;
-		margin: 0 0 2.25em 0;
+		margin: 0 0 1.25em 0;
 		padding: 0.5em 0 0.5em 2em;
 	}
 
@@ -218,7 +218,7 @@ input, select, textarea {
 	pre {
 		font-family: "Source Code Pro", monospace;
 		font-size: 0.9em;
-		margin: 0 0 2.25em 0;
+		margin: 0 0 1.25em 0;
 	}
 
 		pre code {
@@ -435,19 +435,19 @@ input, select, textarea {
 
 		.row {
 			margin-top: 0;
-			margin-left: -2em;
+			margin-left: -1.5em;
 		}
 
 			.row > * {
-				padding: 0 0 0 2em;
+				padding: 0 0 0 1.5em;
 			}
 
 			.row.gtr-uniform {
-				margin-top: -2em;
+				margin-top: -1.5em;
 			}
 
 				.row.gtr-uniform > * {
-					padding-top: 2em;
+					padding-top: 1.5em;
 				}
 
 		.row.gtr-150 {
@@ -1804,7 +1804,7 @@ input, select, textarea {
 /* Form */
 
 	form {
-		margin: 0 0 2.25em 0;
+		margin: 0 0 1.25em 0;
 	}
 
 	label {
@@ -2183,7 +2183,7 @@ input, select, textarea {
 
 		.image.fit {
 			display: block;
-			margin: 0 0 2.25em 0;
+			margin: 0 0 1.25em 0;
 			width: 100%;
 		}
 
@@ -2217,7 +2217,7 @@ input, select, textarea {
 
 	ol {
 		list-style: decimal;
-		margin: 0 0 2.25em 0;
+		margin: 0 0 1.25em 0;
 		padding-left: 1.25em;
 	}
 
@@ -2227,7 +2227,7 @@ input, select, textarea {
 
 	ul {
 		list-style: disc;
-		margin: 0 0 2.25em 0;
+		margin: 0 0 1.25em 0;
 		padding-left: 1em;
 	}
 
@@ -2251,7 +2251,7 @@ input, select, textarea {
 				}
 
 	dl {
-		margin: 0 0 2.25em 0;
+		margin: 0 0 1.25em 0;
 	}
 
 /* Actions */
@@ -2449,7 +2449,7 @@ input, select, textarea {
 	}
 
 	table {
-		margin: 0 0 2.25em 0;
+		margin: 0 0 1.25em 0;
 		width: 100%;
 	}
 
@@ -2741,12 +2741,12 @@ input, select, textarea {
 			-webkit-flex-shrink: 0;
 			-ms-flex-shrink: 0;
 			flex-shrink: 0;
-			padding: 3em;
+			padding: 2em;
 		}
 
 			#header > header .avatar {
 				display: block;
-				margin: 0 auto 2.25em auto;
+				margin: 0 auto 1.25em auto;
 				width: 8em;
 			}
 
@@ -2834,7 +2834,7 @@ input, select, textarea {
 	}
 
 		#main > section > .container {
-			padding: 6em 0 4em 0;
+			padding: 3em 0 2em 0;
 		}
 
 		#main > section:first-child {
@@ -2927,13 +2927,13 @@ input, select, textarea {
 
 			#header {
 				width: 20em;
-			}
+				}
 
-		/* Wrapper */
+				/* Wrapper */
 
-			#wrapper {
+				#wrapper {
 				padding-right: 20em;
-			}
+				}
 
 	}
 
@@ -3169,7 +3169,7 @@ input, select, textarea {
 
 			.features article .image {
 				display: block;
-				margin: 0 0 2.25em 0;
+				margin: 0 0 1.25em 0;
 				padding-right: 0;
 				width: 100%;
 			}
@@ -3317,5 +3317,325 @@ input, select, textarea {
 			.button {
 				padding: 0;
 			}
+
+	}
+
+/* Dense academic layout */
+
+	body, input, select, textarea {
+		font-size: 11.5pt;
+		line-height: 1.48em;
+	}
+
+	p {
+		margin: 0 0 0.55em 0;
+	}
+
+	li {
+		line-height: 1.42em;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		line-height: 1.2em;
+		margin-bottom: 0.35em;
+	}
+
+	h2 {
+		font-size: 1.4em;
+	}
+
+	h3 {
+		font-size: 1.35em;
+		line-height: 1.25em;
+	}
+
+	h4 {
+		font-size: 1em;
+		line-height: 1.3em;
+	}
+
+	header.major h2 {
+		font-size: 2.45em;
+	}
+
+	header p {
+		margin-bottom: 0.65em;
+	}
+
+	.container {
+		max-width: calc(100% - 3em);
+		width: 62em;
+	}
+
+	ul, ol, dl,
+	form,
+	table,
+	.image.fit {
+		margin-bottom: 0.75em;
+	}
+
+	ul li + li,
+	ol li + li {
+		margin-top: 0.12em;
+	}
+
+	ul.actions {
+		margin: 0.6em 0 0.75em -0.75em;
+	}
+
+		ul.actions li {
+			padding: 0.55em 0 0 0.75em;
+		}
+
+	input[type="submit"],
+	input[type="reset"],
+	input[type="button"],
+	.button {
+		font-size: 0.9em;
+		height: 2.35em;
+		line-height: 2.35em;
+		padding: 0 1em;
+	}
+
+	.features article {
+		border-top-width: 2px;
+		margin-bottom: 0.65em;
+		padding-top: 0.85em;
+	}
+
+		.features article .image {
+			padding-right: 1.4em;
+			width: 26%;
+		}
+
+		.features article .inner {
+			width: 72%;
+		}
+
+			.features article .inner h4 {
+				margin-bottom: 0.25em;
+			}
+
+			.features article .inner ul {
+				margin-bottom: 0;
+			}
+
+	.selected-publications {
+		margin-top: 0.45em;
+	}
+
+		.features.selected-publications article {
+			align-items: flex-start;
+			display: flex;
+			gap: 0.9em;
+		}
+
+			.features.selected-publications article .image {
+				flex: 0 0 8.25em;
+				margin: 0;
+				padding-right: 0;
+				width: 8.25em;
+			}
+
+				.features.selected-publications article .image img {
+					border: solid 1px #e4e4e4;
+					height: auto;
+				}
+
+			.features.selected-publications article .inner {
+				display: block;
+				width: auto;
+			}
+
+	.publication-list {
+		list-style: none;
+		margin: 0 0 0.9em 0;
+		padding-left: 0;
+	}
+
+		.publication-list .publication-item {
+			border-top: solid 1px #e9e9e9;
+			margin: 0;
+			padding: 0.42em 0 0.5em 0;
+		}
+
+			.publication-list .publication-item:first-child {
+				border-top: 0;
+				padding-top: 0;
+			}
+
+	.publication-title,
+	.publication-meta,
+	.publication-authors,
+	.publication-venue,
+	.publication-links,
+	.publication-award {
+		display: block;
+	}
+
+	.publication-title {
+		color: #222;
+		font-weight: 700;
+		line-height: 1.22em;
+	}
+
+	.publication-authors,
+	.publication-meta,
+	.publication-venue,
+	.publication-links {
+		font-size: 0.94em;
+		line-height: 1.32em;
+	}
+
+	.selected-publications .publication-meta,
+	.selected-publications .publication-venue,
+	.selected-publications .publication-links {
+		margin: 0.08em 0 0 0;
+	}
+
+	.publication-links {
+		margin-top: 0.1em;
+	}
+
+		.publication-links a {
+			margin-right: 0.45em;
+			white-space: nowrap;
+		}
+
+	.publication-award {
+		color: #c46d00;
+		font-size: 0.94em;
+		font-weight: 700;
+		line-height: 1.3em;
+	}
+
+	.publication-venue .publication-award {
+		display: inline;
+		font-size: 1em;
+		margin-left: 0.25em;
+	}
+
+	.publication-note {
+		color: #777;
+	}
+
+	.publication-list-demo {
+		margin-top: 0.15em;
+	}
+
+	#main > section {
+		border-top-width: 3px;
+	}
+
+		#main > section > .container {
+			padding: 1.8em 0 0.9em 0;
+		}
+
+	#main ul[style*="list-style: none"] {
+		margin-bottom: 0.55em;
+	}
+
+		#main ul[style*="list-style: none"] > li {
+			margin-bottom: 0.25em;
+		}
+
+	#publications h4.major {
+		margin-top: 0.8em;
+	}
+
+	#footer {
+		padding: 1.5em 0 0.9em 0;
+	}
+
+	@media screen and (min-width: 1025px) {
+
+		#header {
+			width: 18em;
+		}
+
+			#header > header {
+				padding: 1.35em;
+			}
+
+				#header > header .avatar {
+					margin-bottom: 0.85em;
+					width: 6.25em;
+				}
+
+			#header > nav ul li {
+				border-top-width: 1px;
+			}
+
+				#header > nav ul li a {
+					padding: 0.56em 0;
+				}
+
+			#header > footer {
+				padding: 1.1em;
+			}
+
+		#wrapper {
+			padding-right: 18em;
+		}
+
+	}
+
+	@media screen and (max-width: 736px) {
+
+		body, input, select, textarea {
+			font-size: 10.75pt;
+			line-height: 1.46em;
+		}
+
+		header.major h2 {
+			font-size: 2em;
+		}
+
+		.container {
+			max-width: calc(100% - 2em);
+		}
+
+		.features article .image {
+			display: block;
+			margin: 0 0 0.65em 0;
+			padding-right: 0;
+			width: 100%;
+		}
+
+		.features article .inner {
+			display: block;
+			width: 100%;
+		}
+
+		.features.selected-publications article {
+			display: block;
+		}
+
+			.features.selected-publications article .image {
+				width: 100%;
+			}
+
+		ul.actions {
+			margin: 0.45em 0 0.65em 0;
+		}
+
+			ul.actions li {
+				padding: 0.45em 0 0 0;
+			}
+
+				ul.actions li:first-child {
+					padding-top: 0;
+				}
+
+		input[type="submit"],
+		input[type="reset"],
+		input[type="button"],
+		.button {
+			padding: 0 0.75em;
+		}
+
+		#main > section > .container {
+			padding: 1.25em 0 0.35em 0;
+		}
 
 	}
