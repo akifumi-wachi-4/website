@@ -3387,6 +3387,39 @@ input, select, textarea {
 			padding: 0.55em 0 0 0.75em;
 		}
 
+	ul.profile-actions {
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.55em 0.75em;
+		margin: 0.95em 0 0.75em 0;
+	}
+
+		ul.profile-actions li {
+			align-items: center;
+			display: flex;
+			padding: 0;
+		}
+
+		.profile-actions .button {
+			align-items: center;
+			column-gap: 0.45em;
+			display: inline-grid;
+			grid-template-columns: 1.1em auto;
+			justify-content: center;
+			min-width: 5.6em;
+		}
+
+		.profile-actions .button.icon {
+			padding-left: 1em;
+		}
+
+			.profile-actions .button.icon:before {
+				line-height: 1;
+				margin: 0;
+				text-align: center;
+				width: 1.1em;
+			}
+
 	input[type="submit"],
 	input[type="reset"],
 	input[type="button"],
@@ -3623,8 +3656,26 @@ input, select, textarea {
 				padding: 0.45em 0 0 0;
 			}
 
+			ul.profile-actions {
+				gap: 0.45em;
+				margin: 0.8em 0 0.65em 0;
+			}
+
+			ul.profile-actions li {
+				display: block;
+				padding: 0;
+			}
+
 				ul.actions li:first-child {
 					padding-top: 0;
+				}
+
+			.profile-actions .button {
+				width: 100%;
+			}
+
+				.profile-actions .button.icon:before {
+					margin-left: 0;
 				}
 
 		input[type="submit"],
