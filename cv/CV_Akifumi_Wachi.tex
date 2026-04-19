@@ -1,0 +1,89 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{url}
+\usepackage{parskip} 	
+
+%other packages for formatting
+\RequirePackage{color}
+\RequirePackage{graphicx}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[scale=0.85]{geometry}
+
+%tabularx environment
+\usepackage{tabularx}
+
+%for lists within experience section
+\usepackage{enumitem}
+
+% centered version of 'X' col. type
+\newcolumntype{C}{>{\centering\arraybackslash}X} 
+
+%to prevent spillover of tabular into next pages
+\usepackage{supertabular}
+\usepackage{tabularx}
+\newlength{\fullcollw}
+\setlength{\fullcollw}{0.47\textwidth}
+
+%custom \section
+\usepackage{titlesec}				
+\usepackage{multicol}
+\usepackage{multirow}
+
+%CV Sections inspired by: 
+%http://stefano.italians.nl/archives/26
+\titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{10pt}{10pt}
+
+%for publications
+\usepackage[style=authoryear,sorting=ynt, maxbibnames=2]{biblatex}
+
+%Setup hyperref package, and colours for links
+\usepackage[unicode, draft=false]{hyperref}
+\definecolor{linkcolour}{rgb}{0,0.2,0.6}
+\hypersetup{colorlinks,breaklinks,urlcolor=linkcolour,linkcolor=linkcolour}
+\addbibresource{citations.bib}
+\setlength\bibitemsep{1em}
+
+%for social icons
+\usepackage{fontawesome5}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+%debug page outer frames
+%\usepackage{showframe}
+
+%----------------------------------------------------------------------------------------
+%	BEGIN DOCUMENT
+%----------------------------------------------------------------------------------------
+\begin{document}
+
+% non-numbered pages
+\pagestyle{empty} 
+
+\begin{tabularx}{\linewidth}{@{} C @{}}
+\Huge{Akifumi Wachi} \\[10pt]
+\href{mailto:akifumi.wachi@gmail.com}{\raisebox{-0.05\height}\faEnvelope \ wachi.akifumi@gmail.com} \ $|$ \ 
+\href{https://akifumi-wachi-4.github.io/website/}{\raisebox{-0.05\height}\faGlobe \ website} \ $|$ \ 
+\href{https://github.com/akifumi-wachi-4}{\raisebox{-0.05\height}\faGithub\ GitHub} \ $|$ \ 
+\href{https://www.linkedin.com/in/akifumi-wachi-008654123/}{\raisebox{-0.05\height}\faLinkedin\ LinkedIn} \ $|$ \ 
+\href{https://scholar.google.co.jp/citations?user=iC2b9GUAAAAJ}{\raisebox{-0.05\height}\faGraduationCap \ Google Scholar} \\
+\end{tabularx}
+
+
+%Interests/ Keywords/ Summary
+\section{Research Interests}
+My research interests lie primarily in reinforcement learning, and span the entire theory-to-application spectrum from foundational advances all the way to deployment in real systems.
+I am particularly enthusiastic about conducting both empirical and theoretical studies that contribute to the improvement of reinforcement learning, ensuring its efficacy, safety, and reliability in practical applications.
+
+\input{0_work_education.tex}
+
+\input{1_publications.tex}
+
+\input{2_reviews.tex}
+
+\input{3_awards.tex}
+
+\vfill
+\center{\footnotesize Last updated: \today}
+
+\end{document}
