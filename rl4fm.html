@@ -235,6 +235,11 @@
 				margin-top: 0;
 			}
 
+			.section-body {
+				min-width: 0;
+				overflow-wrap: anywhere;
+			}
+
 			.notice {
 				padding: clamp(1.5rem, 4vw, 2.2rem);
 				border: 1px solid rgba(20, 107, 90, 0.24);
@@ -379,6 +384,12 @@
 				background: var(--white);
 			}
 
+			.code-table-hint {
+				margin: 0 0 0.5rem;
+				color: var(--muted);
+				font-size: 0.8rem;
+			}
+
 			.code-table {
 				width: 100%;
 				min-width: 620px;
@@ -472,7 +483,7 @@
 				}
 
 				.section {
-					grid-template-columns: 1fr;
+					grid-template-columns: minmax(0, 1fr);
 					gap: 1.5rem;
 				}
 
@@ -714,8 +725,10 @@
 					<h2 class="section-heading" id="code-heading"><span class="section-kicker">02</span>サンプルコード</h2>
 				</div>
 				<div class="section-body">
-					<p class="code-intro">本書には、あえてサンプルコードを掲載していません。この分野はライブラリの更新が速く、紙面に載せたコードの動作を刊行後も保証し続けることが難しいためです。一方で、主要なライブラリには公式のサンプルコードやノートブックが充実しています。ソースコードを見ながら強化学習を勉強したい方は、以下のリンクなどを参考にすると良いでしょう。</p>
-					<div class="code-table-wrap">
+					<p class="code-intro">本書には、あえてサンプルコードを掲載していません。この分野はライブラリの更新が速く、紙面に載せたコードの動作を刊行後も保証し続けることが難しいためです。
+					一方で、この分野は高品質なサンプルコードやノートブックが充実しています。ソースコードを見ながら勉強したい方は、以下のリンクなどを参考にすると良いでしょう。</p>
+					<p class="code-table-hint" id="code-table-hint">表が画面に収まらない場合は、左右にスクロールしてご覧ください。</p>
+					<div class="code-table-wrap" role="region" aria-label="手法別のサンプルコード" aria-describedby="code-table-hint" tabindex="0">
 						<table class="code-table">
 							<thead>
 								<tr>
