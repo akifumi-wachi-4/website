@@ -11,6 +11,32 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
+			#book_jp .book-list {
+				list-style: none;
+				padding-left: 0;
+			}
+			#book_jp .book-list li {
+				display: flex;
+				align-items: flex-start;
+				gap: 1.5em;
+				margin-bottom: 2em;
+				padding-left: 0;
+			}
+			#book_jp .book-list li > div {
+				flex: 1;
+				min-width: 0;
+			}
+			#book_jp .book-cover {
+				width: 140px;
+				height: auto;
+				flex-shrink: 0;
+			}
+			@media screen and (max-width: 480px) {
+				#book_jp .book-list li {
+					flex-direction: column;
+					gap: 1em;
+				}
+			}
 			@media screen and (max-width: 736px) {
 				#book_jp a {
 					display: inline-block;
@@ -101,16 +127,25 @@
                             <section id="book_jp">
 								<div class="container">
 									<h3>書籍</h3>
-                                    <ul>
-                                        <li>和地 瞭良（2026）『基盤モデルのための強化学習』講談社<br>
-                                        <a href="https://www.kodansha.co.jp/book/products/0000430395">[出版社ページ]</a>
+                                    <ul class="book-list">
+                                        <li>
+                                        <img class="book-cover" src="images/rl4fm.jpg" alt="『基盤モデルのための強化学習』の表紙" width="874" height="1240" loading="lazy" />
+                                        <div>和地 瞭良<br>
+                                        『基盤モデルのための強化学習』<br>
+										講談社（2026）<br>
+                                        <a href="rl4fm.html">[サポートページ]</a><br>
                                         <a href="https://www.amazon.co.jp/dp/4065447224">[Amazon]</a>
                                         <a href="https://books.rakuten.co.jp/rb/18801420/">[楽天ブックス]</a>
                                         <a href="https://www.kinokuniya.co.jp/f/dsg-01-9784065447222">[紀伊國屋書店]</a>
+                                        </div>
                                         </li>
-                                        <li>梶野, 宮口, 恐神, 岩城, 和地（2024）『強化学習から信頼できる意思決定へ』サイエンス社 <br>
-                                        <a href = "https://www.saiensu.co.jp/search/?isbn=978-4-7819-1592-0&y=2024">[出版社ページ]</a>
+                                        <li>
+                                        <img class="book-cover" src="images/rl2reliable.webp" alt="『強化学習から信頼できる意思決定へ』の表紙" width="336" height="478" loading="lazy" />
+                                        <div>梶野 洸, 宮口 航平, 恐神 貴行, 岩城 諒, 和地 瞭良<br>
+                                        『強化学習から信頼できる意思決定へ』<br>
+                                        サイエンス社（2024）<br>
                                         <a href = "https://amzn.asia/d/6WUXPqr">[Amazon]</a>
+                                        </div>
 									</li>
                                     </ul>
 								</div>
