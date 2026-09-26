@@ -1,0 +1,478 @@
+[
+  {
+    "id": "publication-1",
+    "title": "Inference-Aware Meta-Alignment of LLMs via Non-Linear GRPO",
+    "authors": "Shokichi Takakura, Akifumi Wachi, Rei Higuchi, Kohei Miyaguchi, Taiji Suzuki",
+    "venue": "International Conference on Machine Learning (ICML), 2026.",
+    "links": [],
+    "note": "[PDF forthcoming]",
+    "type": "paper",
+    "conference": "ICML"
+  },
+  {
+    "id": "publication-2",
+    "title": "Sample-Efficient Hypergradient Estimation for Decentralized Bi-Level Reinforcement Learning",
+    "authors": "Mikoto Kudo, Takumi Tanabe, Akifumi Wachi and Youhei Akimoto",
+    "venue": "International Conference on Automated Planning and Scheduling (ICAPS), 2026.",
+    "links": [],
+    "note": "[PDF forthcoming]",
+    "type": "paper",
+    "conference": "ICAPS"
+  },
+  {
+    "id": "publication-3",
+    "title": "Cost-Minimized Label-Flipping Poisoning Attack to LLM Alignment",
+    "authors": "Shigeki Kusaka, Keita Saito, Mikoto Kudo, Takumi Tanabe, Akifumi Wachi, Youhei Akimoto",
+    "venue": "AAAI Conference on Artificial Intelligence (AAAI), 2026.",
+    "links": [
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/2511.09105"
+      }
+    ],
+    "type": "paper",
+    "conference": "AAAI"
+  },
+  {
+    "id": "publication-4",
+    "title": "A Provable Approach for End-to-End Safe Reinforcement Learning",
+    "authors": "Akifumi Wachi, Kohei Miyaguchi, Takumi Tanabe, Rei Sato, Youhei Akimoto",
+    "venue": "Neural Information Processing Systems (NeurIPS), 2025.",
+    "links": [
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/2505.21852"
+      }
+    ],
+    "type": "paper",
+    "conference": "NeurIPS"
+  },
+  {
+    "id": "publication-5",
+    "title": "Offline Guarded Safe Reinforcement Learning for Medical Treatment Optimization Strategies",
+    "authors": "Runze Yan, Xun Shen, Akifumi Wachi, Sebastien Gros, Anni Zhao, Xiao Hu",
+    "venue": "Neural Information Processing Systems (NeurIPS), 2025.",
+    "links": [
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/2505.16242"
+      }
+    ],
+    "award": "(Spotlight)",
+    "award_inline": true,
+    "type": "paper",
+    "conference": "NeurIPS"
+  },
+  {
+    "id": "publication-6",
+    "title": "Target Return Optimizer for Multi-Game Decision Transformer",
+    "authors": "Kensuke Tatematsu, Akifumi Wachi",
+    "venue": "Asian Conference on Machine Learning (ACML), 2025.",
+    "links": [
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/2503.02311"
+      }
+    ],
+    "type": "paper",
+    "conference": "ACML"
+  },
+  {
+    "id": "publication-7",
+    "title": "Learning-Based Event-Triggered MPC With Gaussian Processes Under Terminal Constraints",
+    "authors": "Kazumune Hashimoto, Yuga Onoue, Akifumi Wachi, Xun Shen",
+    "venue": "IEEE Transactions on Cybernetics, 2025.",
+    "links": [
+      {
+        "label": "IEEE",
+        "url": "https://ieeexplore.ieee.org/abstract/document/10892326"
+      }
+    ],
+    "type": "paper"
+  },
+  {
+    "id": "publication-8",
+    "title": "Stepwise Alignment for Constrained Language Model Policy Optimizations",
+    "authors": "Akifumi Wachi, Thien Q. Tran, Rei Sato, Takumi Tanabe, Youhei Akimoto",
+    "venue": "Neural Information Processing Systems (NeurIPS), 2024.",
+    "links": [
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/2404.11049"
+      },
+      {
+        "label": "Poster",
+        "url": "publications/NeurIPS24/neurips_poster.pdf"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/line/sacpo"
+      },
+      {
+        "label": "Hugging Face (SACPO)",
+        "url": "https://huggingface.co/line-corporation/sacpo"
+      },
+      {
+        "label": "Hugging Face (P-SACPO)",
+        "url": "https://huggingface.co/line-corporation/p-sacpo"
+      }
+    ],
+    "type": "paper",
+    "conference": "NeurIPS"
+  },
+  {
+    "id": "publication-9",
+    "title": "Flipping-based Policy for Chance-Constrained Markov Decision Processes",
+    "authors": "Xun Shen, Shuo Jiang, Akifumi Wachi, Kazumune Hashimoto, Sebastien Gros",
+    "venue": "Neural Information Processing Systems (NeurIPS), 2024.",
+    "links": [
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/2410.06474"
+      }
+    ],
+    "type": "paper",
+    "conference": "NeurIPS"
+  },
+  {
+    "id": "publication-10",
+    "title": "A Survey of Constraint Formulations in Safe Reinforcement Learning",
+    "authors": "Akifumi Wachi, Xun Shen, Yanan Sui",
+    "venue": "International Joint Conference on Artificial Intelligence (IJCAI), 2024.",
+    "links": [
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/2402.02025"
+      },
+      {
+        "label": "Poster",
+        "url": "publications/IJCAI24/IJCAI24_poster.pdf"
+      },
+      {
+        "label": "Slide",
+        "url": "publications/IJCAI24/IJCAI24_slide.pdf"
+      }
+    ],
+    "type": "paper",
+    "conference": "IJCAI"
+  },
+  {
+    "id": "publication-11",
+    "title": "Safe Reinforcement Learning Using Model Predictive Control with Probabilistic Control Barrier Function",
+    "authors": "Xun Shen, Akifumi Wachi, Wataru Hashimoto, Kazumune Hashimoto, Shigemasa Takai",
+    "venue": "American Control Conference (ACC), 2024.",
+    "links": [
+      {
+        "label": "IEEE",
+        "url": "https://ieeexplore.ieee.org/abstract/document/10644734"
+      }
+    ],
+    "type": "paper",
+    "conference": "ACC"
+  },
+  {
+    "id": "publication-12",
+    "title": "Long-term Safe Reinforcement Learning with Binary Feedback",
+    "authors": "Akifumi Wachi, Wataru Hashimoto, Kazumune Hashimoto",
+    "venue": "AAAI Conference on Artificial Intelligence (AAAI), 2024.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "publications/AAAI24/aaai24_saferl_binary.pdf"
+      },
+      {
+        "label": "Poster",
+        "url": "publications/AAAI24/AAAI24_poster.pdf"
+      },
+      {
+        "label": "Slide",
+        "url": "publications/AAAI24/AAAI24_slide.pdf"
+      }
+    ],
+    "type": "paper",
+    "conference": "AAAI"
+  },
+  {
+    "id": "publication-13",
+    "title": "Safe Exploration in Reinforcement Learning: A Generalized Formulation and Algorithms",
+    "authors": "Akifumi Wachi, Wataru Hashimoto, Xun Shen, Kazumune Hashimoto",
+    "venue": "Neural Information Processing Systems (NeurIPS), 2023.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "publications/NeurIPS23/mase_paper.pdf"
+      },
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/2310.03225"
+      },
+      {
+        "label": "Poster",
+        "url": "publications/NeurIPS23/mase_poster.pdf"
+      },
+      {
+        "label": "Video",
+        "url": "https://nips.cc/virtual/2023/poster/71024"
+      }
+    ],
+    "type": "paper",
+    "conference": "NeurIPS"
+  },
+  {
+    "id": "publication-14",
+    "title": "Safe Policy Optimization with Local Generalized Linear Function Approximations",
+    "authors": "Akifumi Wachi, Yunyue Wei, Yanan Sui",
+    "venue": "Neural Information Processing Systems (NeurIPS), 2021.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "publications/NeurIPS21/spolf.pdf"
+      },
+      {
+        "label": "OpenReview",
+        "url": "https://openreview.net/forum?id=DWvcqoRAQP8"
+      },
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/2111.04894"
+      },
+      {
+        "label": "Poster",
+        "url": "publications/NeurIPS21/spolf_poster.pdf"
+      }
+    ],
+    "type": "paper",
+    "conference": "NeurIPS"
+  },
+  {
+    "id": "publication-15",
+    "title": "Polar Embedding",
+    "authors": "Ran Iwamoto, Ryosuke Kohita, Akifumi Wachi",
+    "venue": "The SIGNLL Conference on Computational Natural Language Learning (CoNLL), 2021.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "https://aclanthology.org/2021.conll-1.37/"
+      }
+    ],
+    "type": "paper",
+    "conference": "CoNLL"
+  },
+  {
+    "id": "publication-16",
+    "title": "Neuro-Symbolic Reinforcement Learning with First-Order Logic",
+    "authors": "Daiki Kimura, Masaki Ono, Subhajit Chaudhury, Ryosuke Kohita, Akifumi Wachi, Don Joven Agravante, Michiaki Tatsubori, Asim Munawar, Alexander Gray",
+    "venue": "Empirical Methods in Natural Language Processing (EMNLP), Short paper, 2021.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "https://aclanthology.org/2021.emnlp-main.283/"
+      }
+    ],
+    "type": "paper",
+    "conference": "EMNLP"
+  },
+  {
+    "id": "publication-17",
+    "title": "Language-based General Action Template for Reinforcement Learning Agents",
+    "authors": "Ryosuke Kohita, Akifumi Wachi, Daiki Kimura, Subhajit Chaudhury, Michiaki Tatsubori, Asim Munawar",
+    "venue": "Association for Computational Linguistics (ACL), Findings, 2021.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "https://aclanthology.org/2021.findings-acl.187"
+      }
+    ],
+    "type": "paper",
+    "conference": "ACL"
+  },
+  {
+    "id": "publication-18",
+    "title": "Q-learning with Language Model for Edit-based Unsupervised Summarization",
+    "authors": "Ryosuke Kohita, Akifumi Wachi, Yang Zhao, Ryuki Tachibana",
+    "venue": "Empirical Methods in Natural Language Processing (EMNLP), 2020.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "https://www.aclweb.org/anthology/2020.emnlp-main.34"
+      },
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/2010.04379"
+      }
+    ],
+    "type": "paper",
+    "conference": "EMNLP"
+  },
+  {
+    "id": "publication-19",
+    "title": "Safe Reinforcement Learning in Constrained Markov Decision Processes",
+    "authors": "Akifumi Wachi, Yanan Sui",
+    "venue": "International Conference on Machine Learning (ICML), 2020.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "publications/ICML20/SNO_MDP_ICML20.pdf"
+      },
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/2008.06626"
+      },
+      {
+        "label": "Slide",
+        "url": "publications/ICML20/ICML20_video.pdf"
+      },
+      {
+        "label": "Video",
+        "url": "https://icml.cc/virtual/2020/poster/5904"
+      }
+    ],
+    "type": "paper",
+    "conference": "ICML"
+  },
+  {
+    "id": "publication-20",
+    "title": "Failure-Scenario Maker for Rule-Based Agent using Multi-agent Adversarial Reinforcement Learning and its Application to Autonomous Driving",
+    "authors": "Akifumi Wachi",
+    "venue": "International Joint Conference on Artificial Intelligence (IJCAI), 2019.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "https://www.ijcai.org/proceedings/2019/0832"
+      },
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/1903.10654"
+      },
+      {
+        "label": "Slide",
+        "url": "publications/IJCAI19/IJCAI19_slide.pdf"
+      },
+      {
+        "label": "Poster",
+        "url": "publications/IJCAI19/IJCAI19_poster.pdf"
+      },
+      {
+        "label": "Simulation",
+        "url": "publications/IJCAI19/ijcai_video.mp4"
+      }
+    ],
+    "type": "paper",
+    "conference": "IJCAI"
+  },
+  {
+    "id": "publication-21",
+    "title": "Safe Exploration and Optimization of Constrained MDPs using Gaussian Processes",
+    "authors": "Akifumi Wachi, Yanan Sui, Yisong Yue, Masahiro Ono",
+    "venue": "AAAI Conference on Artificial Intelligence (AAAI), 2018.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "publications/AAAI18/aaai2018_safe_mdp.pdf"
+      },
+      {
+        "label": "Slide",
+        "url": "publications/AAAI18/AAAI18_safemdp.pdf"
+      }
+    ],
+    "type": "paper",
+    "conference": "AAAI"
+  },
+  {
+    "id": "publication-22",
+    "title": "Integral Design Method for Simple and Small Mars Lander System Using Membrane Aeroshell",
+    "authors": "Ryo Sakagami, Ryohei Takahashi, Akifumi Wachi, Yuki Koshiro, Hiroyuki Maezawa, Yasko Kasai, Shinichi Nakasuka",
+    "venue": "Acta Astronautica, 2018.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "https://www.sciencedirect.com/science/article/pii/S0094576517308639"
+      }
+    ],
+    "type": "paper"
+  },
+  {
+    "id": "publication-23",
+    "title": "The Conceptual Design of a Novel Simple and Small-sized Mars lander",
+    "authors": "Ryohei Takahashi, Ryo Sakagami, Akifumi Wachi, Yasko Kasai, Shinichi Nakasuka",
+    "venue": "IEEE Aerospace Conference, 2018.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "https://ieeexplore.ieee.org/document/8396528/"
+      }
+    ],
+    "type": "paper"
+  },
+  {
+    "id": "publication-24",
+    "title": "Mars Entry, Descent, and Landing by Small THz Spacecraft via Membrane Aeroshell",
+    "authors": "Akifumi Wachi, Ryohei Takahashi, Ryo Sakagami, Yuki Koshiro, Yasko Kasai, Shinichi Nakasuka",
+    "venue": "AIAA SPACE and Astronautics Forum and Exposition (AIAA SPACE), 2017.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "https://arc.aiaa.org/doi/abs/10.2514/6.2017-5313"
+      },
+      {
+        "label": "Slide",
+        "url": "publications/AIAA_Space_17/Slide_AIAA_Space.pdf"
+      }
+    ],
+    "type": "paper",
+    "conference": "AIAA SPACE"
+  },
+  {
+    "id": "publication-25",
+    "title": "Hazard Avoidance Control Using Stochastic Optimization for Mars Safe Landing",
+    "authors": "Ryohei Takahashi, Akifumi Wachi, Ryu Funase, Shinichi Nakasuka",
+    "venue": "International Symposium on Space Technology and Sciences (ISTS), 2017.",
+    "links": [],
+    "type": "paper",
+    "conference": "ISTS"
+  },
+  {
+    "id": "publication-26",
+    "title": "Low-Thrust Trajectory Design to Improve Overall Mission Success Probability Incorporating Target Changes in Case of Engine Failures",
+    "authors": "Akifumi Wachi",
+    "venue": "International Symposium on Space Technology and Science (ISTS), 2017.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "http://issfd.org/ISSFD_2017/paper/2017-s-05-d.pdf"
+      }
+    ],
+    "award": "Best Student Paper Award (First Prize)",
+    "type": "paper",
+    "conference": "ISTS"
+  },
+  {
+    "id": "publication-27",
+    "title": "Fault-Tolerant Low-Thrust Trajectory Design with Backups for Multiple Targets",
+    "authors": "Akifumi Wachi, Naoya Ozaki, Shinichi Nakasuka",
+    "venue": "IFAC Symposium on Automatic Control in Aerospace (ACA), 2016.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "https://www.sciencedirect.com/science/article/pii/S2405896316315403"
+      }
+    ],
+    "award": "Best Student Paper Award (First Prize)",
+    "type": "paper",
+    "conference": "ACA"
+  },
+  {
+    "id": "publication-28",
+    "title": "LOA: Logical Optimal Actions for Text-based Interaction Games",
+    "authors": "Daiki Kimura, Subhajit Chaudhury, Masaki Ono, Michiaki Tatsubori, Don Joven Agravante, Asim Munawar, Akifumi Wachi, Ryosuke Kohita, and Alexander Gray",
+    "venue": "Association for Computational Linguistics (ACL), Demo Paper, 2021.",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "https://aclanthology.org/2021.acl-demo.27/"
+      }
+    ],
+    "type": "demo",
+    "conference": "ACL"
+  }
+]

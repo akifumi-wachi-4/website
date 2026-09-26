@@ -1,0 +1,72 @@
+/* Profile introduction and navigation, shared by the English and Japanese pages. */
+
+header.major h2 {
+	color: #222;
+}
+
+#header {
+	background: #f7f8fa;
+	border-left: 1px solid #e4e8ee;
+	color: #536174;
+	text-align: left;
+}
+
+#header a,
+#header > footer .icons li a {
+	color: #536174;
+}
+
+#header a:hover {
+	color: #345f9d !important;
+}
+
+#header > nav {
+	padding: 0 0.8em;
+}
+
+#header > nav ul li {
+	border: 0;
+}
+
+#header > nav ul li a {
+	border-left: 2px solid transparent;
+	border-radius: 0 4px 4px 0;
+	color: #536174 !important;
+	font-size: 0.88em;
+	line-height: 1.4;
+	padding: 0.75em 0.8em;
+}
+
+#header > nav ul li a:hover,
+#header > nav ul li a.active {
+	background: #eaf0f8;
+	color: #345f9d !important;
+}
+
+#header > nav ul li a.active {
+	border-left-color: #4a7dca;
+	font-weight: 700;
+}
+
+#header a:focus-visible {
+	outline: 2px solid #345f9d;
+	outline-offset: -2px;
+}
+
+#header > footer {
+	text-align: center;
+}
+
+@media screen and (min-width: 1025px) {
+	#header {
+		width: 13em;
+	}
+
+	#header > header .avatar {
+		width: 5em;
+	}
+
+	#wrapper {
+		padding-right: 13em;
+	}
+}

@@ -1,0 +1,4 @@
+{% for link in include.paper.links %}
+    <a href="{{ link.url | escape }}">[{{ link.label | escape }}]</a>
+{% endfor %}
+{% if include.paper.note %}<span class="publication-note">{{ include.paper.note | escape }}</span>{% endif %}

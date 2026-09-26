@@ -1,0 +1,21 @@
+{% assign papers = site.data.publications | where: "type", include.type %}
+<ul class="publication-list{% if include.type == 'demo' %} publication-list-demo{% endif %}">
+  {% for paper in papers %}
+  {% if include.conferences and include.conferences contains paper.conference %}
+    {% assign show_paper = true %}
+  {% elsif include.conferences %}
+    {% assign show_paper = false %}
+  {% else %}
+    {% assign show_paper = true %}
+  {% endif %}
+  {% if show_paper %}
+  <li class="publication-item">
+    <span class="publication-title">{{ paper.title | escape }}</span>
+    <span class="publication-authors">{{ paper.authors | escape | replace: 'Akifumi Wachi', '<b>Akifumi Wachi</b>' }}</span>
+    <span class="publication-venue">{{ paper.venue | escape }}{% if paper.award_inline %} <span class="publication-award">{{ paper.award | escape }}</span>{% endif %}</span>
+    {% if paper.award and paper.award_inline != true %}<span class="publication-award">{{ paper.award | escape }}</span>{% endif %}
+    {% if paper.links.size > 0 or paper.note %}<span class="publication-links">{% include publication-links.html paper=paper %}</span>{% endif %}
+  </li>
+  {% endif %}
+  {% endfor %}
+</ul>
