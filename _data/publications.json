@@ -1,5 +1,25 @@
 [
   {
+    "id": "2026-neural-reward-models-single-index",
+    "title": "How Neural Reward Models Learn Features for Policy Optimization: A Single-Index Analysis",
+    "authors": "Rei Higuchi, Ryotaro Kawata, Akifumi Wachi, Shokichi Takakura, Kohei Miyaguchi, Taiji Suzuki",
+    "venue": "Neural Information Processing Systems (NeurIPS), 2026.",
+    "links": [],
+    "note": "[PDF forthcoming]",
+    "type": "paper",
+    "conference": "NeurIPS"
+  },
+  {
+    "id": "2026-reward-estimated-hypergradient",
+    "title": "Reward-Estimated Hypergradient for Bilevel Reinforcement Learning with Black-Box Follower",
+    "authors": "Shigeki Kusaka, Mikoto Kudo, Takumi Tanabe, Akifumi Wachi, Youhei Akimoto",
+    "venue": "Neural Information Processing Systems (NeurIPS), 2026.",
+    "links": [],
+    "note": "[PDF forthcoming]",
+    "type": "paper",
+    "conference": "NeurIPS"
+  },
+  {
     "id": "2026-inference-aware-meta-alignment",
     "title": "Inference-Aware Meta-Alignment of LLMs via Non-Linear GRPO",
     "authors": "Shokichi Takakura, Akifumi Wachi, Rei Higuchi, Kohei Miyaguchi, Taiji Suzuki",
