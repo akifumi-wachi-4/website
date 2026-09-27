@@ -8,11 +8,13 @@
 
 ## 論文を追加する
 
-`_data/publications.json` の配列に次の形式で追加します。全論文一覧はファイルに記載した順序で表示されます。
+`_data/publications.json` の配列の先頭に、新しい論文を次の形式で追加します。全論文一覧はファイルに記載した順序で表示されます。
+
+`id` は `2026-inference-aware-meta-alignment` のように「発表年＋タイトルの短い識別名」にします。表示順を表す番号ではないため、論文を追加しても既存のIDを変更する必要はありません。同じIDが重複しないようにし、一度付けたIDは並べ替えやタイトル修正の際も維持します。
 
 ```json
 {
-  "id": "unique-paper-id",
+  "id": "2026-paper-short-name",
   "title": "Paper title",
   "authors": "First Author, Akifumi Wachi",
   "venue": "Conference name, 2026.",
