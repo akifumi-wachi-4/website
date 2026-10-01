@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="『基盤モデルのための強化学習』4.5節の読者向けに、DPO・IPO・KTOとTRLの実装の対応を補足します。" />
+  <meta name="theme-color" content="#f6f2e9" />
+  <title>DPO・KTO・IPO の TRL 実装｜基盤モデルのための強化学習</title>
+  <script>
+    window.MathJax = {tex: {inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']]}};
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <style>
+    :root { color-scheme: light; --paper: #f6f2e9; --ink: #182724; --muted: #61706c; --accent: #0c4d40; --line: rgba(24,39,36,.16); }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif; line-height: 1.9; }
+    a { color: var(--accent); text-underline-offset: .22em; }
+    a:hover { text-decoration-thickness: 2px; }
+    .wrap { width: min(100% - 3rem, 900px); margin: auto; }
+    .site-header { border-bottom: 1px solid var(--line); padding: 1.2rem 0; }
+    .site-header a { font-size: .9rem; font-weight: 700; text-decoration: none; }
+    .skip-link { position: absolute; top: -5rem; left: 1rem; padding: .5rem 1rem; background: var(--ink); color: white; z-index: 2; }
+    .skip-link:focus { top: 1rem; }
+    .hero { padding: 4.5rem 0 3rem; }
+    .eyebrow { color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .1em; }
+    h1, h2, h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif; line-height: 1.5; }
+    h1 { font-size: clamp(2rem, 5vw, 3.3rem); margin: .6rem 0 1.5rem; }
+    h2 { font-size: clamp(1.6rem, 4vw, 2rem); margin: 0 0 1.5rem; }
+    h3 { font-size: 1.2rem; margin: 2rem 0 .7rem; }
+    p { margin: 1rem 0; }
+    .meta, .source, .caption { font-size: .85rem; color: var(--muted); }
+    .toc { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; padding: 0; list-style: none; }
+    .toc a { font-weight: 700; }
+    section { padding: 3rem 0; border-top: 1px solid var(--line); scroll-margin-top: 1.5rem; }
+    .book-ref { display: block; font: 600 .8rem/1.7 -apple-system, BlinkMacSystemFont, sans-serif; color: var(--muted); margin-bottom: .6rem; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .88em; overflow-wrap: anywhere; }
+    :not(pre) > code { background: rgba(20,107,90,.065); border-radius: 3px; padding: .12em .3em; }
+    pre { background: #182724; color: #f4f4ea; padding: 1.3rem; border-radius: 5px; line-height: 1.65; overflow-x: auto; tab-size: 4; }
+    pre code { overflow-wrap: normal; }
+    .code-note { margin: -.3rem 0 1.5rem; padding: .3rem 0 .3rem .9rem; border-left: 2px solid var(--accent); font-size: .9rem; }
+    .equation { overflow-x: auto; padding: .5rem 0; }
+    .equation mjx-container[display="true"] { min-width: max-content; }
+    footer { border-top: 1px solid var(--line); margin-top: 2rem; padding: 2rem 0; font-size: .85rem; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    @media (max-width: 600px) { .wrap { width: calc(100% - 2rem); } .hero { padding-top: 2.5rem; } section { padding: 2.2rem 0; } pre { padding: 1rem; font-size: .9rem; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-header"><div class="wrap"><a href="rl4fm.html">基盤モデルのための強化学習 サポートページ</a></div></header>
+<main id="main" class="wrap">
+  <div class="hero">
+    <h1>DPO・IPO・KTO の TRL 実装</h1>
+    <p>本書4.5節の数式と、<a href="https://github.com/huggingface/trl">TRL</a> の実装の対応を補足します。記号と各手法の導出は本書を参照してください。
+    なお、TRL の参照コミットは<a href="https://github.com/huggingface/trl/tree/4b4c05a9bed7f684431364b7d0bdcfad718795e3"><code>4b4c05a</code></a>とします。</p>
+    <nav aria-label="目次"><ul class="toc"><li><a href="#dpo">DPO（IPOを含む）</a></li><li><a href="#kto">KTO</a></li></ul></nav>
+  </div>
+
+  <section id="dpo" aria-labelledby="dpo-title">
+    <h2 id="dpo-title"><span class="book-ref">4.5.1節 / 式 (4.19)</span>DPOの実装</h2>
+    <p>本書の式 (4.19) の損失関数は次の通りです。</p>
+    <div class="equation" role="region" aria-label="DPOの損失関数" tabindex="0">
+      \[
+      \mathcal{L}_{\mathrm{DPO}}(\theta)
+      =-\mathbb{E}_{(x,y_w,y_\ell)\sim\mathcal{D}_{\mathrm{HF}}}
+      \left[\log\sigma\left(
+      \beta\log\frac{\pi_\theta(y_w\mid x)}{\pi_{\mathrm{ref}}(y_w\mid x)}
+      -\beta\log\frac{\pi_\theta(y_\ell\mid x)}{\pi_{\mathrm{ref}}(y_\ell\mid x)}
+      \right)\right].
+      \]
+    </div>
+    <p>式 (4.19) は、<a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/dpo_trainer.py#L404"><code>DPOTrainer</code></a> の <code>loss_type="sigmoid"</code> に対応します。損失計算の要点は次の通りです。</p>
+    <pre><code class="language-python">import torch.nn.functional as F
+
+chosen_logratios = chosen_logps - ref_chosen_logps
+rejected_logratios = rejected_logps - ref_rejected_logps
+delta_score = chosen_logratios - rejected_logratios
+loss = -F.logsigmoid(beta * delta_score).mean()</code></pre>
+    <p><code>chosen_logratios</code> は式中の \(\log\frac{\pi_\theta(y_w\mid x)}{\pi_{\mathrm{ref}}(y_w\mid x)}\)、<code>rejected_logratios</code> は \(\log\frac{\pi_\theta(y_\ell\mid x)}{\pi_{\mathrm{ref}}(y_\ell\mid x)}\) に対応します。その差が <code>delta_score</code> なので、<code>beta * delta_score</code> が \(\sigma\) の引数になります。<code>-F.logsigmoid(...).mean()</code> で負の対数を取り、式の期待値をミニバッチ平均で近似します。</p>
+    <p>学習には <code>prompt</code>・<code>chosen</code>・<code>rejected</code> の3列を持つデータを渡します。以下ではSFT済みモデル <code>sft_model</code> と選好データ <code>preference dataset</code> が存在するとします。また、<code>beta</code> は本書の \(\beta\) に対応します。</p>
+    <pre><code class="language-python">from trl import DPOConfig, DPOTrainer
+
+trainer = DPOTrainer(
+    model=sft_model,
+    processing_class=tokenizer,
+    args=DPOConfig(
+        output_dir="outputs/dpo",
+        loss_type="sigmoid",
+        beta=0.1,
+    ),
+    train_dataset=preference_dataset,
+)
+trainer.train()</code></pre>
+    <p id="ipo">4.5.4.2節の IPO も同じ <a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/dpo_trainer.py#L404"><code>DPOTrainer</code></a> で実装できます。上の <code>loss_type="sigmoid"</code> を <code>loss_type="ipo"</code> に変更します。他の DPO の派生手法についても簡単に実装できますので、<a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/dpo_trainer.md#loss-types">公式ドキュメント</a>を参照して下さい。</p>
+  </section>
+
+  <section id="kto" aria-labelledby="kto-title">
+    <h2 id="kto-title"><span class="book-ref">4.5.4.3節 / 式 (4.29)〜(4.32)</span>KTOの実装</h2>
+    <p>KTOには <a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/kto_trainer.py#L465"><code>KTOTrainer</code></a> を使います。データは <code>prompt</code>・<code>completion</code>・<code>label</code> の3列とし、本書の \(\mathcal{Y}^+(x),\mathcal{Y}^-(x)\) に対応するラベルを <code>True</code> / <code>False</code> で渡します。</p>
+    <pre><code class="language-python">from trl import KTOConfig, KTOTrainer
+
+trainer = KTOTrainer(
+    model=sft_model,
+    processing_class=tokenizer,
+    args=KTOConfig(
+        output_dir="outputs/kto",
+        loss_type="kto",
+        beta=0.1,
+        desirable_weight=1.0,
+        undesirable_weight=1.0,
+        per_device_train_batch_size=4,
+        train_sampling_strategy="sequential",
+    ),
+    train_dataset=feedback_dataset,
+)
+trainer.train()</code></pre>
+    <p class="code-note"><code>beta</code> は本書の \(\beta\)、<code>desirable_weight</code> と <code>undesirable_weight</code> は式 (4.32) の \(w_+,w_-\) に対応します。ここでの数値は設定例です。</p>
+    <p>式 (4.29) の \(\kappa\) に対応するのは、実装中の <code>beta * kl</code> です。<code>kl</code> はバッチ内で回答をずらして組み直したデータの対数比から近似し、勾配計算から切り離します。この計算のため、参照した実装ではデバイスごとのバッチサイズを2以上にし、<code>sequential</code> を指定します。</p>
+    <p class="source">実装：<a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/kto_trainer.py#L1566-L1606">KTOの損失関数</a> / 設定の詳細：<a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/kto_trainer.md">KTO Trainer</a> / <a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/kto_config.py#L22"><code>KTOConfig</code></a></p>
+  </section>
+</main>
+<footer><div class="wrap"><span>© Akifumi Wachi</span><a href="rl4fm.html#code">サンプルコード一覧に戻る</a></div></footer>
+</body>
+</html>
