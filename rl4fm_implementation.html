@@ -184,7 +184,7 @@ trainer = DPOTrainer(
     train_dataset=preference_dataset,
 )
 trainer.train()</code></pre>
-    <p id="ipo">4.5.4.2節の IPO も同じ <a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/dpo_trainer.py#L404"><code>DPOTrainer</code></a> で実装できます。上の <code>loss_type="sigmoid"</code> を <code>loss_type="ipo"</code> に変更します。他の DPO の派生手法についても、<code>loss_type</code> を変更することで簡単に実装できます。詳細は、<a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/dpo_trainer.md#loss-types">公式ドキュメント</a>を参照して下さい。</p>
+    <p id="ipo">4.5.4.2節の IPO も同じ <a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/dpo_trainer.py#L404"><code>DPOTrainer</code></a> で実装できます。上の <code>loss_type="sigmoid"</code> を <code>loss_type="ipo"</code> に変更します。他の DPO の派生手法についても、<code>loss_type</code> を変更することで簡単に実装できます。詳細は、<a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/dpo_trainer.md#user-content-loss-types">公式ドキュメント</a>を参照して下さい。</p>
   </section>
 
   <section id="kto" aria-labelledby="kto-title">
