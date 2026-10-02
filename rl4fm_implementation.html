@@ -52,7 +52,7 @@
 <header class="site-header"><div class="wrap"><a href="rl4fm.html">基盤モデルのための強化学習 サポートページ</a></div></header>
 <main id="main" class="wrap">
   <div class="hero">
-    <h1>選好学習・RLVR の TRL 実装</h1>
+    <h1>基盤モデルのための強化学習の実装</h1>
     <p>本書4.5節・5.3節の数式と、<a href="https://github.com/huggingface/trl/tree/4b4c05a9bed7f684431364b7d0bdcfad718795e3">TRL</a> の実装の対応を補足します。記号と各手法の導出は本書を参照してください。
     なお、TRL の参照コミットは<a href="https://github.com/huggingface/trl/tree/4b4c05a9bed7f684431364b7d0bdcfad718795e3"><code>4b4c05a</code></a>とします。</p>
     <nav aria-label="目次"><ul class="toc"><li><a href="#dpo">DPO（IPOを含む）</a></li><li><a href="#kto">KTO</a></li><li><a href="#grpo">GRPO</a></li><li><a href="#dr-grpo">Dr. GRPO</a></li><li><a href="#dapo">DAPO</a></li><li><a href="#gspo">GSPO</a></li></ul></nav>
@@ -199,50 +199,98 @@ trainer.train()</code></pre>
 
   <section id="dr-grpo" aria-labelledby="dr-grpo-title">
     <h2 id="dr-grpo-title"><span class="book-ref">5.3.2節 / 式 (5.10)〜(5.12)</span>Dr. GRPO の実装</h2>
-    <p>Dr. GRPOも <a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/grpo_trainer.py#L139"><code>GRPOTrainer</code></a> で実装できます。上のGRPOの学習例で、<code>args</code> に渡す設定を次に置き換えます。</p>
-    <pre><code class="language-python">GRPOConfig(
-    output_dir="outputs/dr-grpo",
-    num_generations=4,
-    per_device_train_batch_size=4,
-    loss_type="dr_grpo",
-    importance_sampling_level="token",
-    scale_rewards="none",
-    beta=0.0,
-    epsilon=0.2,
-    max_completion_length=512,
-)</code></pre>
-    <p><code>scale_rewards="none"</code> により、式 (5.10) のようにグループ平均だけを引き、標準偏差では割りません。式 (5.11) に合わせてKL項も <code>beta=0.0</code> で外します。数値は設定例です。</p>
-    <p><code>loss_type="dr_grpo"</code> では、回答ごとの長さで割る代わりに、<code>max_completion_length</code> を共通の分母に使います。1バッチ分の集計を簡略化すると、次の計算です。</p>
-    <p class="caption">本書の式 (5.10)〜(5.12) に対応（TRLでは固定値による正規化を追加）</p>
-    <pre><code class="language-python">advantages = (grouped_rewards - grouped_rewards.mean(-1, keepdim=True)).reshape(-1, 1)
-per_token_loss = -torch.minimum(ratio * advantages, clipped_ratio * advantages)
+    <p>本書の式 (5.11) の目的関数は次の通りです。TRLでは、その符号を反転し、固定値で正規化した損失を最小化します。</p>
+    <div class="equation" role="region" aria-label="Dr. GRPOの目的関数" tabindex="0">
+      \[
+      J_{\mathrm{Dr.GRPO}}(\theta)=\mathbb{E}_{\mathcal{D}_{\mathrm{VR}},G,\pi_{\theta_{\mathrm{old}}}}
+      \left[\frac{1}{G}\sum_{i=1}^{G}\sum_{t=1}^{|y_i|}\widehat{W}^{\mathrm{Dr}}_{i,t}(\theta)\right].
+      \tag{5.11}
+      \]
+    </div>
+    <p><a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/grpo_trainer.py#L139"><code>GRPOTrainer</code></a> で、<code>loss_type="dr_grpo"</code>、<code>scale_rewards="none"</code> を指定します。計算の要点は次の通りです。</p>
+    <pre><code class="language-python">import torch
+
+grouped_rewards = rewards.view(-1, G)
+advantages = grouped_rewards - grouped_rewards.mean(-1, keepdim=True)
+advantages = advantages.reshape(-1, 1)
+ratio = (per_token_logps - old_per_token_logps).exp()
+clipped_ratio = ratio.clamp(1 - epsilon, 1 + epsilon)
+per_token_loss = -torch.minimum(
+    ratio * advantages, clipped_ratio * advantages
+)
 loss = (per_token_loss * mask).sum() / (mask.size(0) * max_completion_length)</code></pre>
-    <p>本書の式 (5.11) との違いは、TRLではさらに固定値 <code>max_completion_length</code> で割る点です。回答ごとの長さには依存しませんが、損失と勾配の尺度は変わります。</p>
-    <p class="source">実装：<a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/grpo_trainer.py#L2673-L2698">報酬の正規化</a> / <a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/grpo_trainer.py#L3074-L3078">Dr. GRPOの損失集計</a></p>
+    <p><code>advantages</code> は式 (5.10) の \(\widehat{A}^{\mathrm{Dr}}_i\)、<code>ratio</code> は式 (5.13) の \(w_{i,t}(\theta)\) に対応します。<code>per_token_loss</code> は式 (5.12) の \(\widehat{W}^{\mathrm{Dr}}_{i,t}(\theta)\) の符号を反転したものです。TRLでは式 (5.11) に対し、さらに固定値 <code>max_completion_length</code> で割ります。</p>
+    <pre><code class="language-python">from trl import GRPOConfig, GRPOTrainer
+
+trainer = GRPOTrainer(
+    model=sft_model,
+    processing_class=tokenizer,
+    reward_funcs=reward_func,
+    args=GRPOConfig(
+        output_dir="outputs/dr-grpo",
+        num_generations=4,
+        per_device_train_batch_size=4,
+        loss_type="dr_grpo",
+        importance_sampling_level="token",
+        scale_rewards="none",
+        beta=0.0,
+        epsilon=0.2,
+        max_completion_length=512,
+    ),
+    train_dataset=train_dataset,
+)
+trainer.train()</code></pre>
+    <p><code>scale_rewards="none"</code> で式 (5.10) のように標準偏差による除算を外し、<code>beta=0.0</code> でKL項を外します。<code>max_completion_length</code> は最大生成長であり、損失の正規化にも使われます。</p>
   </section>
 
   <section id="dapo" aria-labelledby="dapo-title">
     <h2 id="dapo-title"><span class="book-ref">5.3.3節 / 式 (5.14)〜(5.20)</span>DAPO の実装</h2>
-    <p>DAPOの損失も <a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/grpo_trainer.py#L139"><code>GRPOTrainer</code></a> で扱えます。<code>loss_type="dapo"</code> で式 (5.16) のトークン単位の集計を選び、<code>epsilon</code> と <code>epsilon_high</code> で式 (5.19) の \(\epsilon_{\mathrm{low}},\epsilon_{\mathrm{high}}\) を指定します。</p>
-    <pre><code class="language-python">GRPOConfig(
-    output_dir="outputs/dapo",
-    num_generations=4,
-    per_device_train_batch_size=4,
-    loss_type="dapo",
-    importance_sampling_level="token",
-    scale_rewards="group",
-    beta=0.0,
-    epsilon=0.2,
-    epsilon_high=0.28,
-)</code></pre>
-    <p>上のGRPOの学習例の <code>args</code> をこの設定に置き換えます。数値は設定例です。クリッピングと集計は、1プロセス・勾配蓄積なしの場合、次のように書けます。</p>
-    <p class="caption">本書の式 (5.16)・(5.19)・(5.20) に対応</p>
-    <pre><code class="language-python">clipped_ratio = ratio.clamp(1 - epsilon, 1 + epsilon_high)
-per_token_loss = -torch.minimum(ratio * advantages, clipped_ratio * advantages)
+    <p>本書の式 (5.16) の目的関数は次の通りです。TRLでは、その符号を反転した損失を最小化します。</p>
+    <div class="equation" role="region" aria-label="DAPOの目的関数" tabindex="0">
+      \[
+      J_{\mathrm{DAPO}}(\theta)=\mathbb{E}_{\mathcal{D},G,\pi_{\theta_{\mathrm{old}}}}
+      \left[\frac{1}{\sum_{i=1}^{G}|y_i|}\sum_{i=1}^{G}\sum_{t=1}^{|y_i|}
+      \widehat{W}^{\mathrm{DAPO}}_{i,t}(\theta)\right].
+      \tag{5.16}
+      \]
+    </div>
+    <p><a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/grpo_trainer.py#L139"><code>GRPOTrainer</code></a> で、<code>loss_type="dapo"</code> を指定します。1プロセス・勾配蓄積なしの場合の計算の要点は次の通りです。</p>
+    <pre><code class="language-python">import torch
+
+grouped_rewards = rewards.view(-1, G)
+advantages = (grouped_rewards - grouped_rewards.mean(-1, keepdim=True)) / (
+    grouped_rewards.std(-1, keepdim=True) + 1e-4
+)
+advantages = advantages.reshape(-1, 1)
+ratio = (per_token_logps - old_per_token_logps).exp()
+clipped_ratio = ratio.clamp(1 - epsilon, 1 + epsilon_high)
+per_token_loss = -torch.minimum(
+    ratio * advantages, clipped_ratio * advantages
+)
 loss = (per_token_loss * mask).sum() / mask.sum().clamp(min=1)</code></pre>
-    <p>分母の <code>mask.sum()</code> が式 (5.16) の \(\sum_i |y_i|\) に対応します。実際のTRLでは、分散学習と勾配蓄積を含めたバッチ全体の有効トークン数で正規化します。</p>
-    <p>この設定で対応するのは損失の集計とクリップ幅です。本書のDAPO全体を再現するには、式 (5.14)・(5.17) の動的サンプリングと、式 (5.15) の長さに応じた報酬も別途組み込む必要があります。<code>loss_type="dapo"</code> だけでは、これらは有効になりません。</p>
-    <p class="source">実装：<a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/grpo_trainer.py#L3023-L3031">上下別のクリッピング</a> / <a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/grpo_trainer.py#L3079-L3085">DAPOの損失集計</a> / <a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/grpo_trainer.md#loss-types">公式ドキュメント</a></p>
+    <p><code>advantages</code> は式 (5.18) の \(\widehat{A}_{i,t}\)、<code>clipped_ratio</code> は式 (5.20) のクリッピングに対応します。<code>per_token_loss</code> は式 (5.19) の \(\widehat{W}^{\mathrm{DAPO}}_{i,t}(\theta)\) の符号を反転したもので、分母の <code>mask.sum()</code> は式 (5.16) の \(\sum_i|y_i|\) です。分散学習や勾配蓄積を使う場合は、バッチ全体の有効トークン数で正規化します。</p>
+    <pre><code class="language-python">from trl import GRPOConfig, GRPOTrainer
+
+trainer = GRPOTrainer(
+    model=sft_model,
+    processing_class=tokenizer,
+    reward_funcs=reward_func,
+    args=GRPOConfig(
+        output_dir="outputs/dapo",
+        num_generations=4,
+        per_device_train_batch_size=4,
+        loss_type="dapo",
+        importance_sampling_level="token",
+        scale_rewards="group",
+        beta=0.0,
+        epsilon=0.2,
+        epsilon_high=0.28,
+    ),
+    train_dataset=train_dataset,
+)
+trainer.train()</code></pre>
+    <p><code>epsilon</code> と <code>epsilon_high</code> は本書の \(\epsilon_{\mathrm{low}},\epsilon_{\mathrm{high}}\) に対応します。<code>scale_rewards="group"</code> で式 (5.18) のグループ内正規化を行い、<code>beta=0.0</code> でKL項を外します。</p>
+    <p>この設定は損失の集計とクリップ幅に対応します。本書のDAPO全体を再現するには、式 (5.14)・(5.17) の動的サンプリングと、式 (5.15) の長さに応じた報酬を別途組み込む必要があります。</p>
   </section>
 
   <section id="gspo" aria-labelledby="gspo-title">
@@ -255,8 +303,23 @@ loss = (per_token_loss * mask).sum() / mask.sum().clamp(min=1)</code></pre>
       \tag{5.22}
       \]
     </div>
+    <p>式 (5.24)・(5.25) の目的関数は次の通りです。TRLでは、その符号を反転した損失を最小化します。</p>
+    <div class="equation" role="region" aria-label="GSPOのクリッピング項" tabindex="0">
+      \[
+      \widehat{W}^{\mathrm{GSPO}}_i(\theta)
+      :=\min\left\{\xi_i(\theta)\widehat{A}_i,\;
+      \operatorname{clip}\left(\xi_i(\theta),1-\epsilon,1+\epsilon\right)\widehat{A}_i\right\}.
+      \tag{5.24}
+      \]
+    </div>
+    <div class="equation" role="region" aria-label="GSPOの目的関数" tabindex="0">
+      \[
+      J_{\mathrm{GSPO}}(\theta)=\mathbb{E}_{\mathcal{D}_{\mathrm{VR}},G,\pi_{\theta_{\mathrm{old}}}}
+      \left[\frac{1}{G}\sum_{i=1}^{G}\widehat{W}^{\mathrm{GSPO}}_i(\theta)\right].
+      \tag{5.25}
+      \]
+    </div>
     <p><code>importance_sampling_level="sequence"</code> を指定すると、トークンごとの対数比を回答内で平均してから指数を取ります。GRPOの <code>ratio</code> に当たる計算を、次のように変更することに対応します。</p>
-    <p class="caption">本書の式 (5.22)・(5.24)・(5.25) に対応</p>
     <pre><code class="language-python">log_ratio = per_token_logps - old_per_token_logps
 sequence_log_ratio = (log_ratio * mask).sum(-1) / mask.sum(-1).clamp(min=1)
 ratio = sequence_log_ratio.exp()
@@ -264,19 +327,26 @@ advantages = advantages.reshape(-1)
 clipped_ratio = ratio.clamp(1 - epsilon, 1 + epsilon)
 loss = -torch.minimum(ratio * advantages, clipped_ratio * advantages).mean()</code></pre>
     <p>ここでは <code>ratio</code> と <code>advantages</code> はそれぞれ回答ごとに1つの値を持ち、式 (5.22) の \(\xi_i(\theta)\) と式 (5.23) の \(\widehat{A}_i\) に対応します。最後の行が式 (5.24)・(5.25) の符号を反転した損失です。</p>
-    <p>上のGRPOの学習例で、<code>args</code> に渡す設定を次に置き換えます。データと報酬関数はそのまま使えます。</p>
-    <pre><code class="language-python">GRPOConfig(
-    output_dir="outputs/gspo",
-    num_generations=4,
-    per_device_train_batch_size=4,
-    loss_type="grpo",
-    importance_sampling_level="sequence",
-    scale_rewards="group",
-    beta=0.0,
-    epsilon=0.0004,
-)</code></pre>
-    <p>式 (5.25) にはKL項がないため <code>beta=0.0</code> とします。<code>loss_type="grpo"</code> は回答ごとに等しい重みで平均するための指定です。<code>epsilon</code> は式 (5.24) の \(\epsilon\) で、上の値は設定例です。GRPOとは重要度比の単位が異なるため、クリップ幅も別に調整します。</p>
-    <p class="source">実装：<a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/grpo_trainer.py#L2994-L3006">回答単位の重要度比</a> / <a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/grpo_trainer.py#L3023-L3031">クリッピング</a> / <a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/grpo_trainer.py#L3063-L3067">回答ごとの平均</a></p>
+    <pre><code class="language-python">from trl import GRPOConfig, GRPOTrainer
+
+trainer = GRPOTrainer(
+    model=sft_model,
+    processing_class=tokenizer,
+    reward_funcs=reward_func,
+    args=GRPOConfig(
+        output_dir="outputs/gspo",
+        num_generations=4,
+        per_device_train_batch_size=4,
+        loss_type="grpo",
+        importance_sampling_level="sequence",
+        scale_rewards="group",
+        beta=0.0,
+        epsilon=0.0004,
+    ),
+    train_dataset=train_dataset,
+)
+trainer.train()</code></pre>
+    <p>式 (5.25) にはKL項がないため <code>beta=0.0</code> とします。また、<code>epsilon</code> は式 (5.24) の \(\epsilon\) に対応します。</p>
   </section>
 </main>
 <footer><div class="wrap"><span>© Akifumi Wachi</span><a href="rl4fm.html#code">サンプルコード一覧に戻る</a></div></footer>
