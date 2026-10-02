@@ -118,7 +118,14 @@ clipped_ratio = torch.clamp(ratio, 1 - cliprange, 1 + cliprange)
 per_token_loss = -torch.minimum(ratio * advantages, clipped_ratio * advantages)
 policy_loss = (per_token_loss * mask).sum() / mask.sum()</code></pre>
     <p><code>ratio</code> は式 (2.29) の \(\pi_\theta(a_t\mid s_t)/\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)\)、<code>advantages</code> は \(\hat{A}_t\)、<code>cliprange</code> は \(\epsilon\) に対応します。</p>
-    <p>以下では、SFT済みの方策 <code>policy</code> とその固定コピー <code>ref_policy</code>、学習済みの報酬モデル <code>reward_model</code>、別に用意した学習対象の価値モデル <code>value_model</code> を用意済みとします。価値モデルは、報酬モデルの保存先から <code>AutoModelForSequenceClassification</code> の <code>num_labels=1</code> で別個に読み込んで初期化できます。各モデルは共通の語彙を使い、<code>tokenizer</code> は左パディングとパディングトークンを設定しておきます。</p>
+    <p>以下のコードでは、4つのモデルを用意します。</p>
+    <ul>
+      <li><code>policy</code>：SFT 済みの方策。PPO で更新します。</li>
+      <li><code>ref_policy</code>：SFT 済みの方策のコピー。参照方策として固定します。</li>
+      <li><code>reward_model</code>：前節で学習した報酬モデル。PPO の学習中は固定します。</li>
+      <li><code>value_model</code>：価値関数を推定するモデル。学習済みの報酬モデル <code>reward_model</code> で初期化することが多いです。</li>
+    </ul>
+    <p>PPO はアクター・クリティック法の一つです。以下のようなソースコードで、<code>policy</code>（アクター）と <code>value_model</code>（クリティック）を同時に学習します。</p>
     <pre><code class="language-python">from trl.experimental.ppo import PPOConfig, PPOTrainer
 
 trainer = PPOTrainer(
@@ -231,7 +238,7 @@ per_token_loss = -torch.minimum(
 loss = ((per_token_loss * mask).sum(-1) / mask.sum(-1).clamp(min=1)).mean()</code></pre>
     <p><code>advantages</code> は式 (5.1) の \(\widehat{A}_{i,t}\)、<code>ratio</code> は式 (5.5) の \(w_{i,t}(\theta)\)、<code>kl</code> は式 (5.7) の推定量です。<code>old_per_token_logps</code> は生成時の方策 \(\pi_{\theta_{\mathrm{old}}}\)、<code>ref_per_token_logps</code> は参照方策 \(\pi_{\mathrm{ref}}\) のトークン対数確率に対応します。</p>
 
-    <p>学習データの例には、本書の表5.1で用いた「20未満の素数の和」を使います。<code>prompt</code> と <code>ground_truth</code> は本書の \(x,y^\star\) に対応します。</p>
+    <p>学習データには、<code>prompt</code> と <code>ground_truth</code> が含まれ、それぞれ本書の \(x\) と \(y^\star\) に対応します。</p>
     <pre><code class="language-python">from datasets import Dataset
 
 train_dataset = Dataset.from_list([
