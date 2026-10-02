@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="『基盤モデルのための強化学習』4.5節・5.3節の読者向けに、DPO・IPO・KTO・GRPO・Dr. GRPO・DAPO・GSPOとTRLの実装の対応を補足します。" />
   <meta name="theme-color" content="#f6f2e9" />
-  <title>選好学習・RLVR の TRL 実装｜基盤モデルのための強化学習</title>
+  <title>基盤モデルのための強化学習の実装の実装｜基盤モデルのための強化学習</title>
   <script>
     window.MathJax = {tex: {inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']]}};
   </script>
@@ -53,13 +53,13 @@
 <main id="main" class="wrap">
   <div class="hero">
     <h1>基盤モデルのための強化学習の実装</h1>
-    <p>本書4.5節・5.3節の数式と、<a href="https://github.com/huggingface/trl/tree/4b4c05a9bed7f684431364b7d0bdcfad718795e3">TRL</a> の実装の対応を補足します。記号と各手法の導出は本書を参照してください。
-    なお、TRL の参照コミットは<a href="https://github.com/huggingface/trl/tree/4b4c05a9bed7f684431364b7d0bdcfad718795e3"><code>4b4c05a</code></a>とします。</p>
+    <p>『基盤モデルのための強化学習』4章・5章の数式と、<a href="https://github.com/huggingface/trl/tree/4b4c05a9bed7f684431364b7d0bdcfad718795e3">TRL</a> の実装の対応を補足します。記号と各手法の導出は本書を参照してください。
+    なお、TRL の参照コミットは、2026年10月2日時点で最新版の <a href="https://github.com/huggingface/trl/tree/4b4c05a9bed7f684431364b7d0bdcfad718795e3"><code>4b4c05a</code></a>とします。</p>
     <nav aria-label="目次"><ul class="toc"><li><a href="#dpo">DPO（IPOを含む）</a></li><li><a href="#kto">KTO</a></li><li><a href="#grpo">GRPO</a></li><li><a href="#dr-grpo">Dr. GRPO</a></li><li><a href="#dapo">DAPO</a></li><li><a href="#gspo">GSPO</a></li></ul></nav>
   </div>
 
   <section id="dpo" aria-labelledby="dpo-title">
-    <h2 id="dpo-title"><span class="book-ref">4.5.1節 / 式 (4.19)</span>DPOの実装</h2>
+    <h2 id="dpo-title"><span class="book-ref">4.5.1節 / 式 (4.19)</span>DPO の実装</h2>
     <p>本書の式 (4.19) の損失関数は次の通りです。</p>
     <div class="equation" role="region" aria-label="DPOの損失関数" tabindex="0">
       \[
@@ -73,15 +73,14 @@
       \]
     </div>
     <p>式 (4.19) は、<a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/dpo_trainer.py#L404"><code>DPOTrainer</code></a> の <code>loss_type="sigmoid"</code> に対応します。損失計算の要点は次の通りです。</p>
-    <p class="caption">本書の式 (4.19) に対応</p>
     <pre><code class="language-python">import torch.nn.functional as F
 
 chosen_logratios = chosen_logps - ref_chosen_logps
 rejected_logratios = rejected_logps - ref_rejected_logps
 delta_score = chosen_logratios - rejected_logratios
 loss = -F.logsigmoid(beta * delta_score).mean()</code></pre>
-    <p><code>chosen_logratios</code> は式中の \(\log\frac{\pi_\theta(y_w\mid x)}{\pi_{\mathrm{ref}}(y_w\mid x)}\)、<code>rejected_logratios</code> は \(\log\frac{\pi_\theta(y_\ell\mid x)}{\pi_{\mathrm{ref}}(y_\ell\mid x)}\) に対応します。その差が <code>delta_score</code> なので、<code>beta * delta_score</code> が \(\sigma\) の引数になります。<code>-F.logsigmoid(...).mean()</code> で負の対数を取り、式の期待値をミニバッチ平均で近似します。</p>
-    <p><code>preference_dataset</code> は、例えば次のように作れます。<code>prompt</code>・<code>chosen</code>・<code>rejected</code> は、本書の \(x,y_w,y_\ell\) に対応します。</p>
+    <p><code>chosen_logratios</code> は式中の \(\log\frac{\pi_\theta(y_w\mid x)}{\pi_{\mathrm{ref}}(y_w\mid x)}\)、<code>rejected_logratios</code> は \(\log\frac{\pi_\theta(y_\ell\mid x)}{\pi_{\mathrm{ref}}(y_\ell\mid x)}\) に対応します。その差が <code>delta_score</code> なので、<code>beta * delta_score</code> が \(\sigma\) の引数になります。<code>-F.logsigmoid(...).mean()</code> で負の対数を取り、期待値をミニバッチ平均で計算します。</p>
+    <p>選好データセット <code>preference_dataset</code> は、例えば次のように作ります。<code>prompt</code>・<code>chosen</code>・<code>rejected</code> は、本書の \(x,y_w,y_\ell\) に対応します。</p>
     <pre><code class="language-python">from datasets import Dataset
 
 preference_dataset = Dataset.from_list([
@@ -91,7 +90,7 @@ preference_dataset = Dataset.from_list([
         "rejected": "札幌です。",
     },
 ])</code></pre>
-    <p>1行が同じ入力に対する選好ペアです。上は形式を示す1件の例で、実際には選好データを複数件用意します。以下ではSFT済みモデル <code>sft_model</code> と対応する <code>tokenizer</code> を用意済みとします。<code>beta</code> は本書の \(\beta\) に対応します。</p>
+    <p>実際には上記のような選好データを複数件用意します。以下ではSFT済みモデル <code>sft_model</code> と対応する <code>tokenizer</code> を用意済みとします。<code>beta</code> は本書の \(\beta\) に対応します。</p>
     <pre><code class="language-python">from trl import DPOConfig, DPOTrainer
 
 trainer = DPOTrainer(
@@ -159,12 +158,14 @@ per_token_loss = -torch.minimum(
 loss = ((per_token_loss * mask).sum(-1) / mask.sum(-1).clamp(min=1)).mean()</code></pre>
     <p><code>advantages</code> は式 (5.1) の \(\widehat{A}_{i,t}\)、<code>ratio</code> は式 (5.5) の \(w_{i,t}(\theta)\)、<code>kl</code> は式 (5.7) の推定量です。<code>old_per_token_logps</code> は生成時の方策 \(\pi_{\theta_{\mathrm{old}}}\)、<code>ref_per_token_logps</code> は参照方策 \(\pi_{\mathrm{ref}}\) のトークン対数確率に対応します。</p>
 
-    <p>学習データの例としては以下のとおりです。<code>prompt</code> と <code>ground_truth</code> は本書の \(x,y^\star\) に対応します。</p>
+    <p>学習データの例には、本書の表5.1で用いた「20未満の素数の和」を使います。<code>prompt</code> と <code>ground_truth</code> は本書の \(x,y^\star\) に対応します。</p>
     <pre><code class="language-python">from datasets import Dataset
 
 train_dataset = Dataset.from_list([
-    {"prompt": "1 + 1 は？ 数字だけで答えてください。", "ground_truth": "2"},
-    {"prompt": "2 + 3 は？ 数字だけで答えてください。", "ground_truth": "5"},
+    {
+        "prompt": "20未満の素数の合計はいくらですか？ 数字だけで答えてください。",
+        "ground_truth": "77",
+    },
 ])
 
 
@@ -173,7 +174,7 @@ def reward_func(completions, ground_truth, **kwargs):
         float(completion.strip() == answer)
         for completion, answer in zip(completions, ground_truth)
     ]</code></pre>
-    <p><code>completions</code> は生成された回答のリストです。データの追加列 <code>ground_truth</code> も報酬関数に渡されるので、ここでは正解との文字列一致を0・1の報酬にしています。実際には、対象タスクに合わせたデータと正誤判定に置き換えます。</p>
+    <p><code>completions</code> は生成された回答のリストです。データの追加列 <code>ground_truth</code> も報酬関数に渡されるので、ここでは数字だけの回答を指定し、正解の <code>77</code> との文字列一致を \(\{0, 1\}\) の二値報酬としています。</p>
     <pre><code class="language-python">from trl import GRPOConfig, GRPOTrainer
 
 trainer = GRPOTrainer(
@@ -199,7 +200,7 @@ trainer.train()</code></pre>
 
   <section id="dr-grpo" aria-labelledby="dr-grpo-title">
     <h2 id="dr-grpo-title"><span class="book-ref">5.3.2節 / 式 (5.10)〜(5.12)</span>Dr. GRPO の実装</h2>
-    <p>本書の式 (5.11) の目的関数は次の通りです。TRLでは、その符号を反転し、固定値で正規化した損失を最小化します。</p>
+    <p>本書の式 (5.11) の目的関数は次の通りです。</p>
     <div class="equation" role="region" aria-label="Dr. GRPOの目的関数" tabindex="0">
       \[
       J_{\mathrm{Dr.GRPO}}(\theta)=\mathbb{E}_{\mathcal{D}_{\mathrm{VR}},G,\pi_{\theta_{\mathrm{old}}}}
@@ -240,7 +241,7 @@ trainer = GRPOTrainer(
     train_dataset=train_dataset,
 )
 trainer.train()</code></pre>
-    <p><code>scale_rewards="none"</code> で式 (5.10) のように標準偏差による除算を外し、<code>beta=0.0</code> でKL項を外します。<code>max_completion_length</code> は最大生成長であり、損失の正規化にも使われます。</p>
+    <p><code>scale_rewards="none"</code> で式 (5.10) のように標準偏差による除算をせず、<code>beta=0.0</code> で KL 項を除外します。<code>max_completion_length</code> は最大生成長であり、損失の正規化にも使われます。</p>
   </section>
 
   <section id="dapo" aria-labelledby="dapo-title">
@@ -289,7 +290,7 @@ trainer = GRPOTrainer(
     train_dataset=train_dataset,
 )
 trainer.train()</code></pre>
-    <p><code>epsilon</code> と <code>epsilon_high</code> は本書の \(\epsilon_{\mathrm{low}},\epsilon_{\mathrm{high}}\) に対応します。<code>scale_rewards="group"</code> で式 (5.18) のグループ内正規化を行い、<code>beta=0.0</code> でKL項を外します。</p>
+    <p><code>epsilon</code> と <code>epsilon_high</code> は本書の \(\epsilon_{\mathrm{low}},\epsilon_{\mathrm{high}}\) に対応します。<code>scale_rewards="group"</code> で式 (5.18) のグループ内正規化を行い、<code>beta=0.0</code> で KL 項を除外します。</p>
     <p>この設定は損失の集計とクリップ幅に対応します。本書のDAPO全体を再現するには、式 (5.14)・(5.17) の動的サンプリングと、式 (5.15) の長さに応じた報酬を別途組み込む必要があります。</p>
   </section>
 
@@ -346,7 +347,7 @@ trainer = GRPOTrainer(
     train_dataset=train_dataset,
 )
 trainer.train()</code></pre>
-    <p>式 (5.25) にはKL項がないため <code>beta=0.0</code> とします。また、<code>epsilon</code> は式 (5.24) の \(\epsilon\) に対応します。</p>
+    <p>式 (5.25) には KL 項がないため <code>beta=0.0</code> とします。また、<code>epsilon</code> は式 (5.24) の \(\epsilon\) に対応します。</p>
   </section>
 </main>
 <footer><div class="wrap"><span>© Akifumi Wachi</span><a href="rl4fm.html#code">サンプルコード一覧に戻る</a></div></footer>
