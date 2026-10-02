@@ -363,8 +363,12 @@
 				text-transform: uppercase;
 			}
 
+			#code {
+				row-gap: 1.5rem;
+			}
+
 			.code-intro {
-				margin: 0 0 1.7rem;
+				margin: 0;
 				color: var(--muted);
 			}
 
@@ -379,6 +383,8 @@
 			}
 
 			.code-table-wrap {
+				grid-column: 1 / -1;
+				min-width: 0;
 				overflow-x: auto;
 				border: 1px solid var(--line);
 				border-radius: 4px;
@@ -393,7 +399,7 @@
 
 			.code-table {
 				width: 100%;
-				min-width: 620px;
+				min-width: 740px;
 				border-collapse: collapse;
 				font-size: 0.88rem;
 				line-height: 1.5;
@@ -424,14 +430,14 @@
 			}
 
 			.code-table tbody th {
-				width: 32%;
+				width: 16%;
 				background: rgba(236, 229, 215, 0.42);
 				font-weight: 700;
 				text-align: left;
 			}
 
 			.code-table .code-method {
-				width: 20%;
+				width: 28%;
 				font-weight: 700;
 				text-align: left;
 			}
@@ -720,14 +726,15 @@
 				</div>
 				<div class="section-body">
 					<p class="code-intro">本書には、あえてサンプルコードを掲載していません。この分野はライブラリの更新が速く、紙面に載せたコードの動作を刊行後も保証し続けることが難しいためです。
-					一方で、この分野は高品質なサンプルコードやノートブックが充実しています。ソースコードを見ながら勉強したい方は、以下のリンクなどを参考にすると良いでしょう。特に、Unsloth は Google Colab で動く jupyter notebook を提供しているためおすすめです。</p>
-					<p><a href="rl4fm_implementation.html">本書の数式とTRLの実装を読む：DPO・KTO・IPO</a>（解説ドラフト）</p>
-					<div class="code-table-wrap" role="region" aria-label="手法別のサンプルコード" aria-describedby="code-table-hint" tabindex="0">
+					一方で、この分野は高品質なサンプルコードやノートブックが充実しています。ソースコードを読みながら勉強したい方は、以下のリンクを参考にすると良いでしょう。特に、Unsloth は Google Colab 上で動く Jupyter Notebook を提供しているためおすすめです。</p>
+				</div>
+				<div class="code-table-wrap" role="region" aria-label="手法別のサンプルコード" tabindex="0">
 						<table class="code-table">
 							<thead>
 								<tr>
 									<th scope="col">本書の対応箇所</th>
 									<th scope="col">手法</th>
+									<th scope="col">本書副教材</th>
 									<th scope="col">TRL</th>
 									<th scope="col">NeMo RL</th>
 									<th scope="col">Unsloth</th>
@@ -737,69 +744,77 @@
 								<tr>
 									<th scope="row">4.4節</th>
 									<td class="code-method">RLHF（報酬モデルの学習）</td>
-									<td><a href="https://github.com/huggingface/trl/blob/main/docs/source/reward_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
+									<td class="unavailable">—</td>
+									<td><a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/reward_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td><a href="https://github.com/NVIDIA-NeMo/RL/blob/main/examples/run_rm.py" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td class="unavailable">—</td>
 								</tr>
 								<tr>
 									<th scope="row">4.4節</th>
 									<td class="code-method">RLHF（PPO）</td>
+									<td class="unavailable">—</td>
 									<td><a href="https://github.com/huggingface/trl/blob/v1.8.0/trl/experimental/ppo/ppo_trainer.py" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td><a href="https://github.com/NVIDIA-NeMo/RL/blob/main/examples/run_ppo.py" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td class="unavailable">—</td>
 								</tr>
 								<tr>
 									<th scope="row">4.5節</th>
-									<td class="code-method"><a href="rl4fm_implementation.html#dpo">DPO</a></td>
-									<td><a href="https://github.com/huggingface/trl/blob/main/docs/source/dpo_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
+									<td class="code-method">DPO</td>
+									<td><a href="rl4fm_implementation.html#dpo" aria-label="DPOの本書副教材">解説</a></td>
+									<td><a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/dpo_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td><a href="https://github.com/NVIDIA-NeMo/RL/blob/main/examples/run_dpo.py" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td><a href="https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Zephyr_%287B%29-DPO.ipynb" target="_blank" rel="noopener noreferrer">Colab ↗</a></td>
 								</tr>
 								<tr>
 									<th scope="row">4.5節</th>
-									<td class="code-method"><a href="rl4fm_implementation.html#kto">KTO</a></td>
-									<td><a href="https://github.com/huggingface/trl/blob/main/docs/source/kto_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
+									<td class="code-method">IPO</td>
+									<td><a href="rl4fm_implementation.html#ipo" aria-label="IPOの本書副教材">解説</a></td>
+									<td><a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/dpo_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
+									<td class="unavailable">—</td>
+									<td class="unavailable">—</td>
+								</tr>
+								<tr>
+									<th scope="row">4.5節</th>
+									<td class="code-method">KTO</td>
+									<td><a href="rl4fm_implementation.html#kto" aria-label="KTOの本書副教材">解説</a></td>
+									<td><a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/kto_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td class="unavailable">—</td>
 									<td><a href="https://colab.research.google.com/drive/1MRgGtLWuZX4ypSfGguFgC-IblTvO2ivM?usp=sharing" target="_blank" rel="noopener noreferrer">Colab ↗</a></td>
 								</tr>
 								<tr>
-									<th scope="row">4.5節</th>
-									<td class="code-method"><a href="rl4fm_implementation.html#ipo">IPO</a></td>
-									<td><a href="https://github.com/huggingface/trl/blob/main/docs/source/dpo_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
-									<td class="unavailable">—</td>
-									<td class="unavailable">—</td>
-								</tr>
-								<tr>
 									<th scope="row">5.3節</th>
 									<td class="code-method">GRPO</td>
-									<td><a href="https://github.com/huggingface/trl/blob/main/docs/source/grpo_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
+									<td><a href="rl4fm_implementation.html#grpo" aria-label="GRPOの本書副教材">解説</a></td>
+									<td><a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/grpo_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td><a href="https://github.com/NVIDIA-NeMo/RL/blob/main/examples/run_grpo.py" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td><a href="https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Qwen3_%284B%29-GRPO.ipynb" target="_blank" rel="noopener noreferrer">Colab ↗</a></td>
 								</tr>
 								<tr>
 									<th scope="row">5.3節</th>
 									<td class="code-method">DAPO</td>
-									<td><a href="https://github.com/huggingface/trl/blob/main/docs/source/grpo_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
+									<td><a href="rl4fm_implementation.html#dapo" aria-label="DAPOの本書副教材">解説</a></td>
+									<td><a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/grpo_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td><a href="https://github.com/NVIDIA-NeMo/RL/blob/main/docs/guides/dapo.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td><a href="https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Qwen3_%284B%29-GRPO.ipynb" target="_blank" rel="noopener noreferrer">Colab ↗</a></td>
 								</tr>
 								<tr>
 									<th scope="row">5.3節</th>
 									<td class="code-method">Dr. GRPO</td>
-									<td><a href="https://github.com/huggingface/trl/blob/main/docs/source/grpo_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
+									<td><a href="rl4fm_implementation.html#dr-grpo" aria-label="Dr. GRPOの本書副教材">解説</a></td>
+									<td><a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/grpo_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td class="unavailable">—</td>
 									<td class="unavailable">—</td>
 								</tr>
 								<tr>
 									<th scope="row">5.3節</th>
 									<td class="code-method">GSPO</td>
-									<td><a href="https://github.com/huggingface/trl/blob/main/docs/source/grpo_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
+									<td><a href="rl4fm_implementation.html#gspo" aria-label="GSPOの本書副教材">解説</a></td>
+									<td><a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/docs/source/grpo_trainer.md" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td><a href="https://github.com/NVIDIA-NeMo/RL/releases" target="_blank" rel="noopener noreferrer">GitHub ↗</a></td>
 									<td class="unavailable">—</td>
 								</tr>
 							</tbody>
 						</table>
-					</div>
 				</div>
 			</section>
 
