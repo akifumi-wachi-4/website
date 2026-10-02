@@ -55,7 +55,7 @@
     <h1>基盤モデルのための強化学習の実装</h1>
     <p><a href="rl4fm.html">『基盤モデルのための強化学習』</a>第4章・第5章の数式と、<a href="https://github.com/huggingface/trl/tree/4b4c05a9bed7f684431364b7d0bdcfad718795e3">TRL</a> の実装の対応を補足します。記号と各手法の導出は本書を参照してください。
     なお、TRL の参照コミットは、2026年10月2日時点で最新版の <a href="https://github.com/huggingface/trl/tree/4b4c05a9bed7f684431364b7d0bdcfad718795e3"><code>4b4c05a</code></a>とします。ただし、PPO は実装が含まれる v1.8.0 を参照します。</p>
-    <nav aria-label="目次"><ul class="toc"><li><a href="#reward-model">報酬モデルの学習</a></li><li><a href="#ppo">PPO</a></li><li><a href="#dpo">DPO（IPOを含む）</a></li><li><a href="#kto">KTO</a></li><li><a href="#grpo">GRPO</a></li><li><a href="#dr-grpo">Dr. GRPO</a></li><li><a href="#dapo">DAPO</a></li><li><a href="#gspo">GSPO</a></li></ul></nav>
+    <nav aria-label="目次"><ul class="toc"><li><a href="#reward-model">RLHF（報酬モデルの学習）</a></li><li><a href="#ppo">RLHF（PPO）</a></li><li><a href="#dpo">DPO・IPO</a></li><li><a href="#kto">KTO</a></li><li><a href="#grpo">GRPO</a></li><li><a href="#dr-grpo">Dr. GRPO</a></li><li><a href="#dapo">DAPO</a></li><li><a href="#gspo">GSPO</a></li></ul></nav>
   </div>
 
   <section id="reward-model" aria-labelledby="reward-model-title">
@@ -69,7 +69,7 @@
       \tag{4.8}
       \]
     </div>
-    <p><a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/reward_trainer.py#L232"><code>RewardTrainer</code></a> で学習できます。損失計算の要点は次の通りです。</p>
+    <p>報酬関数は、<a href="https://github.com/huggingface/trl/blob/4b4c05a9bed7f684431364b7d0bdcfad718795e3/trl/trainer/reward_trainer.py#L232"><code>RewardTrainer</code></a> で学習できます。損失関数の計算は次のように記述できます。</p>
     <pre><code class="language-python">import torch.nn.functional as F
 
 loss = -F.logsigmoid(rewards_chosen - rewards_rejected).mean()</code></pre>
@@ -84,11 +84,11 @@ preference_dataset = Dataset.from_list([
         "rejected": "札幌です。",
     },
 ])</code></pre>
-    <p>以下では、SFT済みモデルの保存先を <code>sft_model_path</code>、対応するトークナイザを <code>tokenizer</code> とします。モデルの保存先を文字列で渡すと、<code>RewardTrainer</code> がスカラーを出力する分類ヘッド付きモデルとして読み込みます。</p>
+    <p>SFT 済みモデルを <code>sft_model</code>、対応するトークナイザを <code>tokenizer</code> とすると、報酬モデルを選好データセットから学習することが可能です。</p>
     <pre><code class="language-python">from trl import RewardConfig, RewardTrainer
 
 trainer = RewardTrainer(
-    model=sft_model_path,
+    model=sft_model,
     processing_class=tokenizer,
     args=RewardConfig(
         output_dir="outputs/reward-model",
@@ -117,9 +117,8 @@ ratio = torch.exp(new_logprobs - old_logprobs)
 clipped_ratio = torch.clamp(ratio, 1 - cliprange, 1 + cliprange)
 per_token_loss = -torch.minimum(ratio * advantages, clipped_ratio * advantages)
 policy_loss = (per_token_loss * mask).sum() / mask.sum()</code></pre>
-    <p><code>ratio</code> は式 (2.29) の \(\pi_\theta(a_t\mid s_t)/\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)\)、<code>advantages</code> は \(\hat{A}_t\)、<code>cliprange</code> は \(\epsilon\) に対応します。<code>mask</code> でパディングを除き、目的関数の符号を反転して最小化します。実際の学習では価値関数の損失も加えます。</p>
+    <p><code>ratio</code> は式 (2.29) の \(\pi_\theta(a_t\mid s_t)/\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)\)、<code>advantages</code> は \(\hat{A}_t\)、<code>cliprange</code> は \(\epsilon\) に対応します。</p>
     <p>以下では、SFT済みの方策 <code>policy</code> とその固定コピー <code>ref_policy</code>、学習済みの報酬モデル <code>reward_model</code>、別に用意した学習対象の価値モデル <code>value_model</code> を用意済みとします。価値モデルは、報酬モデルの保存先から <code>AutoModelForSequenceClassification</code> の <code>num_labels=1</code> で別個に読み込んで初期化できます。各モデルは共通の語彙を使い、<code>tokenizer</code> は左パディングとパディングトークンを設定しておきます。</p>
-    <p>学習データにはプロンプトだけを渡します。例えば、選好データから次のように作れます。</p>
     <pre><code class="language-python">from trl.experimental.ppo import PPOConfig, PPOTrainer
 
 trainer = PPOTrainer(
@@ -139,7 +138,7 @@ trainer = PPOTrainer(
     train_dataset=prompt_dataset,
 )
 trainer.train()</code></pre>
-    <p><code>kl_coef</code> が式 (4.9)・(4.10) の \(\beta\) に対応します。<code>kl_estimator="k1"</code> では、式 (4.10) の対数確率比をKLペナルティに使います。<code>ref_policy</code> と <code>reward_model</code> は固定し、方策と価値モデルを更新します。設定値は例です。</p>
+    <p><code>kl_coef</code> が式 (4.9)・(4.10) の \(\beta\) に対応します。<code>kl_estimator="k1"</code> では、式 (4.10) の対数確率比をKLペナルティに使います。<code>ref_policy</code> と <code>reward_model</code> は固定し、方策と価値モデルを更新します。</p>
   </section>
 
   <section id="dpo" aria-labelledby="dpo-title">
