@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="報酬ハッキング" />
+  <meta name="theme-color" content="#f6f2e9" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="報酬ハッキング" />
+  <meta property="og:description" content="『基盤モデルのための強化学習』副読教材：報酬ハッキング。" />
+  <title>報酬ハッキング（基盤モデルのための強化学習 副読教材）</title>
+  <script>
+    window.MathJax = {tex: {inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']]}};
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <style>
+    :root { color-scheme: light; --paper: #f6f2e9; --ink: #182724; --muted: #53645e; --accent: #0c4d40; --line: rgba(24,39,36,.18); }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif; line-height: 1.95; }
+    a { color: var(--accent); text-underline-offset: .22em; overflow-wrap: anywhere; }
+    a:hover { text-decoration-thickness: 2px; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .wrap { width: min(100% - 3rem, 780px); margin: auto; }
+    .site-header { border-bottom: 1px solid var(--line); padding: 1.2rem 0; }
+    .site-header a { font-size: .85rem; font-weight: 700; text-decoration: none; }
+    .skip-link { position: absolute; top: -5rem; left: 1rem; padding: .5rem 1rem; background: var(--ink); color: white; z-index: 2; }
+    .skip-link:focus { top: 1rem; }
+    .hero { padding: 4.5rem 0 2.6rem; }
+    .eyebrow { color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .08em; }
+    h1, h2, h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif; line-height: 1.5; }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); margin: .8rem 0; letter-spacing: -.035em; }
+    .subtitle { font-size: clamp(1.05rem, 3vw, 1.4rem); margin: 0 0 1.5rem; }
+    h2 { font-size: clamp(1.5rem, 4vw, 1.95rem); margin: 0 0 1.5rem; }
+    h3 { font-size: 1.18rem; margin: 2rem 0 .7rem; }
+    p { margin: 1.2rem 0; }
+    .meta, .note, figcaption { font-size: .85rem; color: var(--muted); }
+    .intro { font-size: 1.08rem; }
+    section { padding: 3rem 0; border-top: 1px solid var(--line); scroll-margin-top: 1.5rem; }
+    .toc { padding: 1.5rem 1.8rem; border: 1px solid var(--line); margin: 1.8rem 0 0; }
+    .toc h2 { font-family: inherit; font-size: .9rem; margin-bottom: .7rem; }
+    .toc ol { padding-left: 1.4rem; margin: 0; font-size: .9rem; }
+    .definition-quote { margin: 1.5rem 0; padding: 1.2rem 1.6rem; background: #fff3e6; }
+    .definition-quote p { margin: 0; }
+    .definition-source { font-size: .85rem; color: var(--muted); }
+    .citation { font-size: .8em; white-space: nowrap; }
+    figure { margin: 2rem 0; }
+    .game-example { display: flow-root; }
+    .game-media { float: right; width: 420px; max-width: 56%; margin: .3rem 0 1rem 1.5rem; }
+    .game-media iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; }
+    .game-media img { display: block; width: 100%; height: auto; }
+    .game-media--mario { width: 270px; }
+    .game-media figcaption { margin-top: .4rem; font-size: .75rem; line-height: 1.6; }
+    @media (max-width: 600px) { .game-media { float: none; max-width: 100%; margin: 1rem auto; } }
+    .book-card { display: grid; grid-template-columns: 125px minmax(0, 1fr); gap: 1.7rem; background: #fffdf8; border: 1px solid var(--line); padding: 1.6rem; margin-top: 2rem; align-items: start; }
+    .book-card img { width: 100%; height: auto; display: block; }
+    .book-card h3 { margin: 0 0 .6rem; }
+    .book-card p { margin: .7rem 0; font-size: .9rem; }
+    .button { display: inline-block; padding: .5rem 1rem; background: var(--accent); color: #fffdf8; text-decoration: none; font-size: .85rem; }
+    .references { padding-left: 1.5rem; font-size: .88rem; }
+    .references li { margin: 1rem 0; padding-left: .2rem; scroll-margin-top: 1.5rem; }
+    :target { scroll-margin-top: 1.5rem; }
+    .references li:target { background: #e7ecdf; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; font-size: .85rem; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    @media (max-width: 600px) { .wrap { width: calc(100% - 2rem); } .hero { padding-top: 2.5rem; } section { padding: 2.3rem 0; } .book-card { grid-template-columns: 80px minmax(0, 1fr); gap: 1rem; padding: 1rem; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    @media print { body { background: white; font-size: 10.5pt; } .wrap { width: 100%; } .site-header, .skip-link, .toc, .button { display: none; } .hero, section { padding: 1.2rem 0; } h2, h3 { break-after: avoid; } .book-card { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-header"><div class="wrap"><a href="rl4fm.html">基盤モデルのための強化学習 サポートページ</a></div></header>
+<main id="main" class="wrap">
+<article aria-labelledby="article-title">
+  <header class="hero">
+    <p class="eyebrow">『基盤モデルのための強化学習』副読教材 1</p>
+    <h1 id="article-title">報酬ハッキングについて</h1>
+    <p class="meta">和地 瞭良 · <time datetime="2026-10-11">2026年11月1日</time></p>
+    <p>『基盤モデルのための強化学習』の第10章でも取り上げた「報酬ハッキング」は、強化学習の本質的な課題です。AI の安全性にも深く関わる問題ですが、いまだに明確な解決策は見つかっていません。そもそも強化学習を使う限り、本質的な解決策が存在するのかすら怪しい問題です。</p>
+    <p>『基盤モデルのための強化学習』を執筆していた 2026年7月頃と、本記事を執筆している2026年11月では、AI の安全性に関する深刻度が大きく変わったように感じています。本記事では、ここ数ヶ月の話題や、書籍には書きにくい個人的な見解についてまとめます。</p>
+  </header>
+
+  <section id="definition" aria-labelledby="definition-heading">
+    <h2 id="definition-heading">報酬ハッキングとは</h2>
+    <p>本書では、<a href="https://proceedings.neurips.cc/paper_files/paper/2022/hash/3d719fee332caa23d5038b8a90e81796-Abstract-Conference.html">Skalse et al. (2022)</a> の定義を踏襲し、報酬ハッキングを以下のように定義しています。</p>
+    <blockquote class="definition-quote">
+      <p>不完全なプロキシ報酬関数 \(\hat r\) に関して方策を最適化したことによって、真の報酬関数 \(r^\star\) に関する性能が低下すること</p>
+    </blockquote>
+    <p>Dario Amodei らが2016年に執筆した論文 <cite>Concrete Problems in AI Safety</cite> <a class="citation" href="#ref-1" aria-label="参考文献1">[1]</a>でも、報酬ハッキングは強化学習の安全性に関する課題の一つとして議論されています。</p>
+  </section>
+
+  <section id="definition" aria-labelledby="definition-heading">
+    <h2 id="definition-heading">報酬設計の難しさ</h2>
+    <p>報酬ハッキングを防ぐための一番の正攻法は、真の報酬関数 \(r^\star\) と可能な限り同じプロキシ報酬関数 \(\hat r\) を設計することです。しかし、複雑な問題において、完璧なプロキシ報酬関数 \(\hat r\) を設計することは通常できません。</p>
+    <p>例えば、自分の資産を増やしてくれる自律エージェントを強化学習で獲得したいとします。どのように報酬関数を設計しますか？もっとも安直な報酬設計は、「増えた資産額に応じて報酬を与える」というものでしょう。逆に資産額が減ってしまった場合には、負の報酬（ペナルティ）を与える、というように定義します。</p>
+
+    <p>このとき、AI の気持ちになって、この報酬設計に忠実に行動するとどのような戦略が学習され得るでしょうか？もちろん、自分の意図を汲み取ったポートフォリオを組んでくれるかもしれませんが、現金をすべて株に変えたり、場合によって家を売って株を買うような方策が得られてしまうかもしれません。もしかすると、銀行のシステムをハッキングしたり、他人のお金を盗むようなこともあるかもしれません。「そんな馬鹿な」と思うかもしれませんが、これらの行動は上記の報酬設計とは一切矛盾しません。結局のところ、人間は法律や倫理観などを加味した複雑な真の報酬関数 \(r^\star\) を持っているのに対し、人間が AI に対し与えるプロキシ報酬関数 \(\hat r\) は不完全であることが大半です。</p>
+
+    <p>一方で、プロキシ報酬関数 \(\hat r\) を細かく設計するのは大変ですし、それならルールベースで良いのでは、という話にもなります。強化学習を使う以上、報酬設計は簡素にしつつ、細かいところはよしなにやってほしいわけで、プロキシ報酬を細かく設計しまくるのは本末転倒です。</p>
+  </section>
+
+  <section id="games" aria-labelledby="games-heading">
+    <h2 id="games-heading">2010年代の報酬ハッキング</h2>
+    <div class="game-example">
+    <figure class="game-media">
+      <iframe src="https://player.vimeo.com/video/745142691?h=3e2f0ad5d7&amp;dnt=1" title="CoastRunners：同じ場所を回り続けるボート" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe>
+      <figcaption>出典：<a href="https://openai.com/index/faulty-reward-functions/">OpenAI（2016）</a></figcaption>
+    </figure>
+    <p>
+    <a href="https://openai.com/index/faulty-reward-functions/">OpenAI のブログ</a><a class="citation" href="#ref-2" aria-label="参考文献2">[2]</a>で 2016 年に議論され注目された報酬ハッキングの例が、右の動画です。この CoastRunners というゲームでは、コースを完走するまでの時間を最短にすることが主目目的です。一方で、コース上のターゲットに当たると追加で得点を獲得できます。</p>
+    <p>研究者が、その追加得点を報酬にしたところ、ボートはゴールへ向かわず、ターゲットの周辺でぐるぐると回り続けました。ターゲットが出現するたびに追加得点をコツコツ積み重ねたほうが、コースを完走するより高い得点を得られてしまいました。</p>
+    <p>強化学習アルゴリズムは、人間の与えられた報酬を忠実に最大化することには成功しています。人間の定義したプロキシ報酬 \(\hat r\) が、コースを完走してほしいという人間の潜在的な報酬 \(r^\star\) と乖離していた、という結果です。</p>
+    </div>
+    <div class="game-example">
+    <figure class="game-media game-media--mario">
+      <img src="https://i.pinimg.com/originals/55/e0/1b/55e01b94a9c5546b61b59ae300811c83.gif" alt="その場でジャンプし、頭でブロックを繰り返し叩くマリオ" loading="lazy" />
+      <figcaption>出典：<a href="https://unsloth.ai/docs/jp/meru/reinforcement-learning-rl-guide/advanced-rl-documentation/rl-reward-hacking">マリオにおける報酬ハッキング</a></figcaption>
+    </figure>
+    <p>もう少し卑近な例として、マリオがその場で跳び、頭でブロックを叩き続けるアニメーション<a class="citation" href="#ref-3" aria-label="参考文献3">[3]</a>も報酬ハッキングの例としてよく知られています。右の動画のように頭でブロックを叩き続けるだけで再現なくスコアが得られるなら、ステージをクリアするよりも結果的に大きなスコアを得ることが出来ます。人間にとってはこのようにゲームをプレイをしても何も面白くありませんが、AI によっては忠実にプロキシ報酬を最大化した結果にすぎません。</p>
+    </div>
+    <p>いずれの例も、可視化すれば人間には何がおかしいかは明らかであり、研究者が報酬関数を設計し直せばよいだけです。したがって、2010年代までの報酬ハッキングは、ゲームで不正にスコアを稼ぐという程度のものであり、悪影響もほぼゼロと言ってよいでしょう。</p>
+  </section>
+
+  <section id="llm" aria-labelledby="llm-heading">
+    <h2 id="llm-heading">ChatGPT 以降の報酬ハッキング</h2>
+    <p>ChatGPT が登場してから、報酬ハッキングが様々な形で観測されています。本書の10章でもまとめている通り、以下のような代表例が存在します。</p>
+    <ol>
+      <li>意図せぬ詭弁：AI が、人間を騙して不当に高評価を得ようとする現象。</li>
+      <li>冗長バイアス：RLHF を施した AI が、内容は薄いまま冗長な文章を出力すること。あるいは RLVR を施した AI が、過度に長考すること。</li>
+      <li>コーディングにおける AI スロップ：必要以上に複雑なロジックや例外処理を実装することによって、一見すると堅牢だが意味のないコードを書くこと。</li>
+      <li>迎合：AI がユーザーの意見に同調し、出力を歪めること。</li>
+    </ol>
+    <p>AI ツールをある程度使っている人であれば、上記の報酬ハッキングはすべて心当たりがあると思います。誤解を恐れずに言えば、AI ツールを使っていない人でも、同じようなことをする人間は SNS やメディア等で目にするのではないでしょうか？意図せぬ詭弁や迎合は詐欺師がよく使うテクニックですし、薄い話をダラダラ話して賢そうに見せる人もたくさんいます。</p>
+    <p>ChatGPT が登場した 2022年から2026年初頭までに発見された報酬ハッキングは、AI が人間らしい振る舞いをできるようになってきた証左でもあり、人間社会で既視感のあるものでした。一方で、人間のズルや犯罪を完全になくすことが難しいように、AI の報酬ハッキングを完全に防ぐことが難しくなってきた、とも言えます。</p>
+  </section>
+
+  <section id="hugging-face" aria-labelledby="hugging-face-heading">
+    <h2 id="hugging-face-heading">OpenAI のモデルによる Hugging Face への侵害</h2>
+    <p>2026年7月には、OpenAI の内部評価中のモデルが Hugging Face のシステムに侵入する事案が起きました。Hugging Face が侵害を公表し、OpenAIも7月21日に自社のモデルによるものだったと明らかにしています。<a class="citation" href="#ref-6" aria-label="参考文献6">[6]</a><a class="citation" href="#ref-7" aria-label="参考文献7">[7]</a></p>
+    <p>OpenAI の事後報告によると、AI は評価課題の解答を探す過程で、共有基盤を通じて許可されていない通信を行い、隔離環境（サンドボックス）から抜け出して外部にアクセスしました。その主要因の一つが、報酬ハッキングであったと明記されています。<a class="citation" href="#ref-9" aria-label="参考文献9">[9]</a></p>
+    <p>私は、この事案を皮切りに、報酬ハッキングが実社会に与える影響が飛躍的に深刻化したのではないかと考えています。お恥ずかしながら、似たような事件はいずれ起こるとは思っていたものの、2026年7月のタイミングでこんな事件が起こるとは思っていませんでしたし、OpenAI のモデルが実行した手口に関しては全く想定していませんでした。セキュリティの門外漢である私を含め、人類の大半は、たとえ許可されたとしても隔離環境から抜け出すことすらできないのではないかと思います。</p>
+  </section>
+
+  <section id="transition" aria-labelledby="transition-heading">
+    <h2 id="transition-heading">報酬ハッキングの変遷</h2>
+    <p>2010年代の報酬ハッキングは、ボートやマリオの例を見ても分かる通り、可視化さえすれば人間が容易に気づくことが出来ました。報酬ハッキングの原因はひとえに人間の報酬設計が間違えていたからであり、報酬関数を再設計すれば対処することのできる問題でした。</p>
+    <p>2022年の ChatGPT 登場以降、AI の能力が人間に追いついてくるとともに、報酬ハッキングも人間らしくなってきました。人間社会でも見られるようなズルを AI も学習し、場当たり的な振る舞いをするようになったわけです。この段階で AI モデルや報酬モデルはすでに巨大化・複雑化し、簡単に制御できるものではなくなりました。現代の AI では、人間の犯罪を撲滅するのが難しいように、報酬ハッキングを防ぐことも困難となりました。一方で、人間社会は、ある程度のハッキングを許容できるように設計されており、人類と AI が（少なくとも）表面上は調和していたように思います。</p>
+    <p>2026年11月現在、絶妙なバランスで成り立っていた人間社会が、AI によって調和を失いつつあるように思います。なにか事案が起きたとしても、2010年代の頃のように簡単に気づくことは出来ないでしょうし、2022年〜2025年のように既視感のあるハッキングばかりが起こるわけではなくなるでしょう。その道のプロが時間をかけて調査しないと分からないような報酬ハッキングが頻発する、というような事態も起こりかねません。</p>
+  </section>
+
+  <section id="design" aria-labelledby="design-heading">
+    <h2 id="design-heading">AI の現状に関する個人的な意見</h2>
+    <p>では、OpenAI や Anthropic が怠慢な組織で AI の安全性を蔑ろにしているのかというと、私はそうは思いません。膨大な検証や評価を通して、真の報酬関数 \(p^\star \) に極めて近いプロキシ報酬 \(p^\sharp\) を獲得しているのだと考えています。私自身、強化学習や安全性に興味のあるものとして、最近の AI を激しめに使っている人間ですが、その有用性と安全性は認めざるを得ません。一方で、タスクが複雑になればなるほど、ありとあらゆるケースでプロキシ報酬が真の報酬と一致することを保証するのは難しくなります。昨今、AI は、様々なタスクを膨大な数こなしているわけで、重大な事故を一度も起こさずに AI を動かし続けるのは至難の業だと感じています。</p>
+    <p>また、悪意のある人間がいたときに、ある種の報酬ハッキングは意図的に起こすことができます。仮に、あるオープンウェイトのモデルが、（善良な）市民の真の報酬関数 \(p^\star \) で学習されているとしましょう。このとき、悪意のある人が、AI がなにかしらの不正を働くように悪意のある報酬関数 \(p^\dagger\) を用いて強化学習を施したとします。すると、結果的に得られた AI が内部的に持つ報酬関数が、上記で述べたプロキシ報酬 \(p^\sharp\) とは比較にならないほど、真の報酬 \(p^\star \) と乖離することになるのは想像に難くありません。</p>
+    <p>最後に、完全に個人的な意見ですが、昨今の AI 開発自体が、報酬ハッキングを起こしているように感じます。私は、AI はあくまで道具であり、人類の幸福を最大化するのが AI の研究開発の目的であるべきだと考えています。近年の AI の進歩は、検証可能な報酬を用いた強化学習（RLVR）が主たる要因の一つなわけですが、「数学やコーディングのタスクが解けること」と「人類の幸福」の間には隔たりがあるように感じられます。フロンティアラボの競争原理が、AI の研究開発の本来の目的と年々乖離しており、人類全体が報酬ハッキングの巨大実験に巻き込まれているように感じます。</p>
+    <p>強化学習は、良くも悪くも強力な技術です。強化学習の研究者であれば、誰しもがその潜在的リスクを認知していると思いますが、代替手段は今のところ存在せず、世界中で広く用いられています。昨今 AI の安全性に関する議論が盛り上がっていますが、地に足がついていない言説も多いと感じます。もし、『基盤モデルのための強化学習』を丁寧に勉強して、自分なりの考えを持ちたい方は、拙著を手にとっていただけると幸いです。</p>
+    <aside class="book-card" aria-label="書籍のご案内">
+      <a href="rl4fm.html"><img src="images/cover_rl4fm.jpg" width="800" height="1200" loading="lazy" alt="『基盤モデルのための強化学習』の表紙" /></a>
+      <div>
+        <h3>基盤モデルのための強化学習</h3>
+        <p>和地 瞭良 著 · 講談社</p>
+        <p><a class="button" href="rl4fm.html">書籍の内容と目次を見る</a></p>
+        <p><a href="https://www.kodansha.co.jp/book/products/0000430395">講談社の書籍紹介</a> · <a href="https://www.amazon.co.jp/dp/4065447224">Amazon</a> · <a href="https://books.rakuten.co.jp/rb/18801420/">楽天ブックス</a></p>
+      </div>
+    </aside>
+  </section>
+
+  <section id="references" aria-labelledby="references-heading">
+    <h2 id="references-heading">参考文献</h2>
+    <ol class="references">
+      <li id="ref-1">Amodei, D. et al. (2016). <a href="https://arxiv.org/abs/1606.06565"><cite>Concrete Problems in AI Safety</cite></a>. arXiv:1606.06565.</li>
+      <li id="ref-2">Clark, J. &amp; Amodei, D. (2016年12月21日). <a href="https://openai.com/index/faulty-reward-functions/"><cite>Faulty reward functions in the wild</cite></a>. OpenAI.</li>
+      <li id="ref-3">Unsloth. <a href="https://unsloth.ai/docs/jp/meru/reinforcement-learning-rl-guide/advanced-rl-documentation/rl-reward-hacking"><cite>RL Reward Hacking</cite></a>. </li>
+      <li id="ref-4">Gao, L., Schulman, J., &amp; Hilton, J. (2023). <a href="https://proceedings.mlr.press/v202/gao23h.html"><cite>Scaling Laws for Reward Model Overoptimization</cite></a>. ICML, PMLR 202, 10835–10866.</li>
+      <li id="ref-5">Baker, B. et al. (2025年3月10日). <a href="https://openai.com/index/chain-of-thought-monitoring/"><cite>Detecting misbehavior in frontier reasoning models</cite></a>. OpenAI. </li>
+      <li id="ref-6">OpenAI (2026年7月21日). <a href="https://openai.com/index/hugging-face-model-evaluation-security-incident/"><cite>OpenAI and Hugging Face partner to address security incident during model evaluation</cite></a>.</li>
+      <li id="ref-7">Hugging Face (2026年7月16日). <a href="https://huggingface.co/blog/security-incident-july-2026"><cite>Security incident disclosure — July 2026</cite></a>.</li>
+      <li id="ref-8">Hugging Face (2026年7月28日). <a href="https://huggingface.co/blog/agent-intrusion-technical-timeline"><cite>Anatomy of a Frontier Lab Agent Intrusion: A Technical Timeline of the July 2026 Incident</cite></a>.</li>
+      <li id="ref-9">OpenAI (2026年8月26日). <a href="https://openai.com/index/hugging-face-incident-and-the-road-ahead/"><cite>The Hugging Face incident and the road ahead</cite></a>. </li>
+      <li id="ref-11">Skalse, J., Howe, N., Krasheninnikov, D., &amp; Krueger, D. (2022). <a href="https://proceedings.neurips.cc/paper_files/paper/2022/hash/3d719fee332caa23d5038b8a90e81796-Abstract-Conference.html"><cite>Defining and Characterizing Reward Gaming</cite></a>. <cite>Advances in Neural Information Processing Systems</cite>, 35 (NeurIPS 2022). </li>
+    </ol>
+  </section>
+</article>
+</main>
+<footer><div class="wrap"><span>© Akifumi Wachi</span><a href="rl4fm.html#supplements">書籍の副読教材一覧へ</a></div></footer>
+</body>
+</html>
