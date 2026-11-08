@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="AI と研究" />
+  <meta name="theme-color" content="#f6f2e9" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="AI と研究" />
+  <meta property="og:description" content="『基盤モデルのための強化学習』副読教材：AI と研究" />
+  <title>AI と研究（基盤モデルのための強化学習 副読教材）</title>
+  <script>
+    window.MathJax = {tex: {inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']]}};
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <style>
+    :root { color-scheme: light; --paper: #f6f2e9; --ink: #182724; --muted: #53645e; --accent: #0c4d40; --line: rgba(24,39,36,.18); }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif; line-height: 1.95; }
+    a { color: var(--accent); text-underline-offset: .22em; overflow-wrap: anywhere; }
+    a:hover { text-decoration-thickness: 2px; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .wrap { width: min(100% - 3rem, 780px); margin: auto; }
+    .site-header { border-bottom: 1px solid var(--line); padding: 1.2rem 0; }
+    .site-header a { font-size: .85rem; font-weight: 700; text-decoration: none; }
+    .skip-link { position: absolute; top: -5rem; left: 1rem; padding: .5rem 1rem; background: var(--ink); color: white; z-index: 2; }
+    .skip-link:focus { top: 1rem; }
+    .hero { padding: 4.5rem 0 2.6rem; }
+    .eyebrow { color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .08em; }
+    h1, h2, h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif; line-height: 1.5; }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); margin: .8rem 0; letter-spacing: -.035em; }
+    .subtitle { font-size: clamp(1.05rem, 3vw, 1.4rem); margin: 0 0 1.5rem; }
+    h2 { font-size: clamp(1.5rem, 4vw, 1.95rem); margin: 0 0 1.5rem; }
+    h3 { font-size: 1.18rem; margin: 2rem 0 .7rem; }
+    p { margin: 1.2rem 0; }
+    .meta, .note, figcaption { font-size: .85rem; color: var(--muted); }
+    .intro { font-size: 1.08rem; }
+    section { padding: 3rem 0; border-top: 1px solid var(--line); scroll-margin-top: 1.5rem; }
+    .toc { padding: 1.5rem 1.8rem; border: 1px solid var(--line); margin: 1.8rem 0 0; }
+    .toc h2 { font-family: inherit; font-size: .9rem; margin-bottom: .7rem; }
+    .toc ol { padding-left: 1.4rem; margin: 0; font-size: .9rem; }
+    .definition-quote { margin: 1.5rem 0; padding: 1.2rem 1.6rem; background: #fff3e6; }
+    .definition-quote p { margin: 0; }
+    .definition-source { font-size: .85rem; color: var(--muted); }
+    .citation { font-size: .8em; white-space: nowrap; }
+    figure { margin: 2rem 0; }
+    .research-fun-chart { margin: 1.2rem 0 1.8rem; }
+    .research-fun-chart .chart-scroll { overflow-x: auto; }
+    .research-fun-chart .chart-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .research-fun-chart svg { display: block; width: 100%; min-width: 760px; height: auto; font-family: inherit; }
+    .research-fun-chart .grid { stroke: var(--line); stroke-dasharray: 3 5; }
+    .research-fun-chart .axis { stroke: var(--muted); }
+    .research-fun-chart .curve { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .research-fun-chart .point { fill: var(--accent); }
+    .research-fun-chart text { fill: var(--muted); font-size: 15px; }
+    .research-fun-chart .value { fill: var(--accent); font-weight: 700; }
+    .research-fun-chart .rejected { stroke: #a54d37; }
+    .research-fun-chart .rejected-label { fill: #a54d37; font-weight: 700; }
+    .research-fun-chart figcaption { margin-top: .6rem; line-height: 1.7; }
+    @media print { .research-fun-chart svg { min-width: 0; } }
+    .game-example { display: flow-root; }
+    .game-media { float: right; width: 336px; max-width: 56%; margin: calc(1.2rem + .475em) 0 1rem 1.5rem; }
+    .game-media iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; }
+    .game-media img { display: block; width: 100%; height: auto; }
+    .game-media--mario { width: 180px; }
+    .game-media figcaption { margin-top: .4rem; font-size: .75rem; line-height: 1.6; text-align: center; }
+    @media (max-width: 600px) { .game-media { float: none; max-width: 100%; margin: 1rem auto; } }
+    .book-card { display: grid; grid-template-columns: 125px minmax(0, 1fr); gap: 1.7rem; background: #fffdf8; border: 1px solid var(--line); padding: 1.6rem; margin-top: 2rem; align-items: start; }
+    .book-card img { width: 100%; height: auto; display: block; }
+    .book-card h3 { margin: 0 0 .6rem; }
+    .book-card p { margin: .7rem 0; font-size: .9rem; }
+    .button { display: inline-block; padding: .5rem 1rem; background: var(--accent); color: #fffdf8; text-decoration: none; font-size: .85rem; }
+    .references { padding-left: 1.5rem; font-size: .88rem; }
+    .references li { margin: 1rem 0; padding-left: .2rem; scroll-margin-top: 1.5rem; }
+    :target { scroll-margin-top: 1.5rem; }
+    .references li:target { background: #e7ecdf; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; font-size: .85rem; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    @media (max-width: 600px) { .wrap { width: calc(100% - 2rem); } .hero { padding-top: 2.5rem; } section { padding: 2.3rem 0; } .book-card { grid-template-columns: 80px minmax(0, 1fr); gap: 1rem; padding: 1rem; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    @media print { body { background: white; font-size: 10.5pt; } .wrap { width: 100%; } .site-header, .skip-link, .toc, .button { display: none; } .hero, section { padding: 1.2rem 0; } h2, h3 { break-after: avoid; } .book-card { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-header"><div class="wrap"><a href="rl4fm.html">基盤モデルのための強化学習 サポートページ</a></div></header>
+<main id="main" class="wrap">
+<article aria-labelledby="article-title">
+  <header class="hero">
+    <p class="eyebrow">『基盤モデルのための強化学習』副読教材 2</p>
+    <h1 id="article-title">AI と研究</h1>
+    <p class="meta">和地 瞭良 · <time datetime="2026-11-03">2026年11月3日</time></p>
+    <p>『基盤モデルのための強化学習』とそんなに関係ないのですが、AI と研究について私なりの所見を書いておこうと思います。IBIS 2026 で大学院生や若手研究者と会話したり、大御所の先生方のパネルディスカッションを拝聴したりして色々と思うところもありましたので、言語化することで誰かの気持ちが多少軽くなったりしないかな、と期待しています。本記事に、「こうすべき」などという結論が書かれているわけではなく、迷える子羊が一匹いる、くらいに思っていただければと思います。最後の方には、なぜ『基盤モデルのための強化学習』を執筆したのか、についても軽く触れろうと思います。</p>
+  </header>
+
+  <section id="definition" aria-labelledby="who_am_i">
+    <h2 id="wh">あなたはどんな研究者？</h2>
+    <p>多分にポジショントークが入ると思いますので、まず私がどんな人間なのかを簡単にまとめます。
+      <ol>
+      <li>所属：IBM 東京基礎研究所 → LINEヤフー（研究所）</li>
+      <li>専門分野：強化学習 ×｛安全性・基盤モデル｝ </li>
+      <li>研究歴：10年弱（修士一年の2017年に開始）。基本的には自分で手を動かすことが多いが、ここ数年はインターン生と研究したり、大学との共同研究の代表者をするようなことも増えてきた </li>
+      <li>研究のスタイル：理論と実験を両方やる。「世の中で見過ごされてきた新しい問題を作って、納得感のある美しい手法を提案したい」タイプ。ベンチマーク競争には興味なし</li>
+      <li>研究のどのフェーズが好きか：AI が今ほど進歩する前は、以下のグラフのようなイメージ
+        <figure class="research-fun-chart">
+          <div class="chart-scroll" tabindex="0" role="region" aria-label="研究の楽しさのグラフ（画面が狭い場合は横にスクロールできます）">
+            <svg viewBox="0 0 1100 425" role="img" aria-labelledby="research-fun-title research-fun-desc">
+              <title id="research-fun-title">研究の各フェーズにおける楽しさ</title>
+              <desc id="research-fun-desc">楽しさは、研究テーマを練るとき100、定式化90、手法を考えるとき85、理論解析75。実験は基本20程度で、ときどき一瞬80程度に上がり、最後は90に到達する。論文執筆は80、査読対応はずっと20。採択通知では採択なら100、不採録なら0。</desc>
+              <text x="28" y="25">楽しさ</text>
+              <g class="grid">
+                <path d="M60 60H1050 M60 110H1050 M60 160H1050 M60 210H1050 M60 260H1050 M60 310H1050" />
+              </g>
+              <g text-anchor="end">
+                <text x="48" y="65">100</text><text x="48" y="115">80</text>
+                <text x="48" y="165">60</text><text x="48" y="215">40</text>
+                <text x="48" y="265">20</text><text x="48" y="315">0</text>
+              </g>
+              <path class="axis" fill="none" d="M60 45V310H1050" />
+              <!-- y = 310 - 2.5 × 楽しさ。実験・査読対応はフェーズ内の変化も描く。 -->
+              <path class="curve" d="M110 60 L230 85 L350 97.5 L470 122.5
+                L540 260 L570 260 L578 110 L586 260 L622 260
+                L630 110 L638 260 L673 260 L681 110 L689 260
+                L710 260 L740 85 L800 110 L860 260 L930 260" />
+              <path class="curve" stroke-dasharray="7 6" d="M930 260L1010 60" />
+              <path class="curve rejected" stroke-dasharray="7 6" d="M930 260L1010 310" />
+              <g class="point">
+                <circle cx="110" cy="60" r="4"/><circle cx="230" cy="85" r="4"/>
+                <circle cx="350" cy="97.5" r="4"/><circle cx="470" cy="122.5" r="4"/>
+                <circle cx="740" cy="85" r="4"/><circle cx="800" cy="110" r="4"/>
+                <circle cx="1010" cy="60" r="5"/>
+              </g>
+              <circle cx="1010" cy="310" r="5" fill="#a54d37" />
+              <g class="value" text-anchor="middle">
+                <text x="1010" y="41">採択</text>
+              </g>
+              <text class="rejected-label" x="1010" y="290" text-anchor="middle">不採録</text>
+              <g text-anchor="middle">
+                <text x="110" y="343"><tspan x="110">研究テーマ</tspan><tspan x="110" dy="21">を練る</tspan></text>
+                <text x="230" y="343">定式化</text>
+                <text x="350" y="343"><tspan x="350">手法を</tspan><tspan x="350" dy="21">考える</tspan></text>
+                <text x="470" y="343">理論解析</text><text x="640" y="343">実験</text>
+                <text x="800" y="343">論文執筆</text><text x="895" y="343">査読対応</text>
+                <text x="1010" y="343">採択通知</text>
+              </g>
+            </svg>
+          </div>
+        </figure>
+      </li>
+      <li>採択実績：<a href="https://akifumi-wachi-4.github.io/website/jp.html#pubs_jp">ホームページの業績欄</a> を参照。例えば、直近5年で NeurIPS は主著4件・共著4件。NeurIPS や ICML などの機械学習系の学会、AAAI や IJCAI などの AI系 の学会が主な生息域。いわゆる AI 系のトップカンファレンスにどっぷり浸かっている側の人間</li>
+    </ol>
+    本記事は、こういう30代前半の人間が、最近の AI と（AI）研究についてどう考えているかを徒然なるままに書く、というものです。IBIS 2026 のパネルディスカッション等で、「みんなも悩んでいるんだな」と感じて私の心も軽くなったので、「私も悩んでいるよ」と書くことにも少しは意味があるのではないかと思っている次第です。
+    </p>
+
+    <p>また、この記事では、「AI を用いた AI 研究」と「AI 分野のトップカンファレンスにおける研究」は分けて議論しようと思います。</p>
+
+  </section>
+
+  <section id="research_by_ai" aria-labelledby="research_by_ai">
+    <h2 id="research_by_ai">AI による研究・AI を用いた研究</h2>
+    <p>実は、「AI を用いた AI 研究」に関しては、私は（多少の懸念はもちつつも）基本的には肯定的な意見をもっています。</p>
+  </section>
+
+  <section id="research_by_ai" aria-labelledby="research_by_ai">
+    <h2 id="research_by_ai">AI のトップカンファレンスについて</h2>
+    <p></p>
+  </section>
+
+  
+</article>
+</main>
+<footer><div class="wrap"><span>© Akifumi Wachi</span><a href="rl4fm.html#supplements">書籍の副読教材一覧へ</a></div></footer>
+</body>
+</html>
