@@ -62,6 +62,14 @@
     pre { padding: 1rem 1.2rem; background: #fffdf8; border: 1px solid var(--line); overflow-x: auto; line-height: 1.65; tab-size: 2; }
     code { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: .94em; }
     .proof-step { margin: 1.5rem 0; border-left: 3px solid var(--accent); padding-left: 1.2rem; }
+    .new-lines { background-color: var(--step-tint); }
+    .proof-step:nth-of-type(7n+1) { --step-tint: #eeeaf4; }
+    .proof-step:nth-of-type(7n+2) { --step-tint: #f7eddc; }
+    .proof-step:nth-of-type(7n+3) { --step-tint: #e7f0e6; }
+    .proof-step:nth-of-type(7n+4) { --step-tint: #e6eff6; }
+    .proof-step:nth-of-type(7n+5) { --step-tint: #f7e9e6; }
+    .proof-step:nth-of-type(7n+6) { --step-tint: #eef0dc; }
+    .proof-step:nth-of-type(7n+7) { --step-tint: #e2f1ec; }
     .proof-step h3 { margin-top: 0; }
     .goal { color: var(--accent); }
     .aime-problem { min-inline-size: 0; margin: 1.8rem 0; padding: .9rem clamp(1rem, 4vw, 2rem) 1.2rem; border: 1px solid var(--accent); background: #fffdf8; break-inside: avoid; }
@@ -134,32 +142,103 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
     · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2
   rw [le_div_iff₀ hpos]
   nlinarith [sq_nonneg (3 * x * Real.sin x - 2)]</code></pre>
-    <p>
-        これだとなんのことか分からないと思うので、コードをブロックごとに区切って解説します。
-    </p>
-    <div class="proof-step"><h3>出発点 ── 仮定とゴールを読む</h3>
-    <pre><code>theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
-    12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x) := by</code></pre>
-    <p><code>(x : ℝ)</code> は実数の変数宣言、<code>h</code> は二つの条件を「かつ」で結んだ仮定の名前です。その後のコロンから <code>:=</code> までが示したい命題、<code>by</code> から先が証明です。証明の途中で使える仮定と、まだ示すべき命題（ゴール）を合わせて<strong>証明状態</strong>と呼びます。この状態に働きかける指示が <strong>tactic</strong> です。</p></div>
-    <div class="proof-step"><h3>分母の正値性を示す</h3>
-    <pre><code>  have hpos : 0 &lt; x * Real.sin x := by
+    <p>これだけだと分からないと思うので、一行ずつ解説していきます。</p>
+    <div class="proof-step">
+      <h3>1. 仮定とゴールの定義</h3>
+      <pre><code><span class="new-lines">import Mathlib
+
+theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
+    12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x) := by</span></code></pre>
+   ><code>(x : ℝ)</code> は実数の変数宣言、<code>h</code> は<code>h : 0 &lt; x ∧ x &lt; Real.pi</code>を「かつ」で結んだ仮定の名前です。
+          その後のコロンから <code>:=</code> までが示したい命題、<code>by</code> から先が証明です。
+      <p>
+          この 3 行を Lean Web に入力すると、以下のような 3 行が <strong>tactic state</strong>（証明の状態）として出力されると思います。
+          まだ何も証明が進んでいないので面白くありませんが、上の2行には、いま使える変数 <code>x : ℝ</code> と仮定 <code>h : 0 &lt; x ∧ x &lt; Real.pi</code> が記述されています。
+          最後の行で <code>⊢</code> の右にある不等式が、これから示すべき命題、つまり<strong>ゴール</strong>です。
+      </p>
+      <pre class="goal" aria-label="この時点の証明状態"><code>x : ℝ
+h : 0 &lt; x ∧ x &lt; Real.pi
+⊢ 12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x)</code></pre>
+    </div>
+    <div class="proof-step">
+      <h3>2. \(x sinx > 0\) をまず示す</h3>
+      <pre><code>import Mathlib
+
+theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
+    12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x) := by
+<span class="new-lines">  have hpos : 0 &lt; x * Real.sin x := by</span></code></pre>
+      <p>証明状態を操作する指示を <strong>tactic</strong> と呼びます。ここで使う <code>have</code> は、途中で使いたい命題に名前を付け、その証明を始める指示です。
+          内側の <code>by</code> に入った直後は、
+      <pre class="goal" aria-label="この時点の証明状態"><code>⊢ 0 &lt; x * Real.sin x</code></pre>
+      がゴールです。ここで使えるのはもとの仮定 <code>h</code> だけで、<code>hpos</code> 自身はまだ使えません。このゴールを閉じて外側に戻ると、証明済みの事実として <code>hpos</code> が手元に加わります。</p>
+    </div>
+    <div class="proof-step">
+      <h3>3. 積の正値性を二つのゴールに分ける</h3>
+      <pre><code>import Mathlib
+
+theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
+    12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x) := by
+  have hpos : 0 &lt; x * Real.sin x := by
+<span class="new-lines">    apply mul_pos</span></code></pre>
+      <p><code>mul_pos</code> は「正の数どうしの積は正」という定理です。<code>apply</code> は定理の結論を今のゴールに合わせ、必要な前提を新しいゴールにします。積が正だと言うために、二つの因子がそれぞれ正であることを示せばよくなりました。</p>
+      <pre class="goal" aria-label="この時点の証明状態"><code>⊢ 0 &lt; x
+⊢ 0 &lt; Real.sin x</code></pre>
+    </div>
+    <div class="proof-step">
+      <h3>4. 一つ目を仮定で閉じる</h3>
+      <pre><code>import Mathlib
+
+theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
+    12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x) := by
+  have hpos : 0 &lt; x * Real.sin x := by
+    apply mul_pos
+<span class="new-lines">    · exact h.1</span></code></pre>
+      <p><code>·</code> で一つ目のゴールに取りかかります。<code>h.1</code> は仮定 <code>h</code> の前半、つまり <code>0 &lt; x</code> の証拠です。<code>exact</code> にゴールと一致する証拠を渡すと、そのゴールが閉じます。残るのは正弦の符号だけです。</p>
+      <pre class="goal" aria-label="この時点の証明状態"><code>⊢ 0 &lt; Real.sin x</code></pre>
+    </div>
+    <div class="proof-step">
+      <h3>5. 二つ目を閉じ、元の不等式に戻る</h3>
+      <pre><code>import Mathlib
+
+theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
+    12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x) := by
+  have hpos : 0 &lt; x * Real.sin x := by
     apply mul_pos
     · exact h.1
-    · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2</code></pre>
-    <p><code>have</code> は途中で使いたい命題に名前を付けます。ここでは <code>hpos</code> を得るため、積が正であることを示す小さな証明を始めました。<code>apply mul_pos</code> は「正の数どうしの積は正」という定理を結論から逆向きに使う指示です。すると Lean に残るゴールは二つです。</p>
-    <pre class="goal"><code>⊢ 0 &lt; x
-⊢ 0 &lt; Real.sin x</code></pre>
-    <p><code>⊢</code> の右がゴールです。コード中の <code>·</code> は各ゴールに対する証明の始まりで、<code>exact</code> は「この証拠がちょうどゴールに合う」という指示です。一つ目には仮定の前半 <code>h.1</code> がそのまま使えます。二つ目には、0 から π の間で正弦が正だというライブラリの定理に <code>h.1</code> と <code>h.2</code> を渡します。これで元の証明に戻り、以後は <code>hpos</code> を使えます。</p></div>
-    <div class="proof-step"><h3>分母を払うと、Lean は何を返すか</h3>
-    <pre><code>  rw [le_div_iff₀ hpos]</code></pre>
-    <p><code>rw</code> は同値な形への書き換えです。正の分母に対する補題に <code>hpos</code> を渡したので、不等号の向きを保ったまま分母を払えます。この直後、Lean が返す状態を同じ記法にそろえると、次のようになります。</p>
-    <pre class="goal"><code>x : ℝ
-h : 0 &lt; x ∧ x &lt; Real.pi
-hpos : 0 &lt; x * Real.sin x
-⊢ 12 * (x * Real.sin x) ≤ 9 * (x ^ 2 * Real.sin x ^ 2) + 4</code></pre>
-    <p>ここまで来ると、正弦についての知識はもう要りません。論文の例で、モデルがこの状態を読んで生成した最後の一手はこれです。</p>
-    <pre><code>  nlinarith [sq_nonneg (3 * x * Real.sin x - 2)]</code></pre>
-    <p><code>sq_nonneg</code> で「この式の二乗は非負」という事実を与え、<code>nlinarith</code> に多項式の整理と不等式の導出を任せています。どの式を二乗すればよいかを選んだのがモデルで、その選択で本当にゴールが閉じるかを確かめたのが Lean です。</p></div>
+<span class="new-lines">    · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2</span></code></pre>
+      <p><code>h.2</code> は仮定の後半 <code>x &lt; Real.pi</code> です。区間 (0, π) で正弦が正だという定理に <code>h.1</code> と <code>h.2</code> を渡すと、二つ目の証拠が得られます。これで内側の証明が終わります。外側では、元の不等式を示すために <code>hpos</code> が使えるようになりました。</p>
+      <pre class="goal" aria-label="この時点の証明状態"><code>hpos : 0 &lt; x * Real.sin x
+⊢ 12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x)</code></pre>
+    </div>
+    <div class="proof-step">
+      <h3>6. 正の分母を払う</h3>
+      <pre><code>import Mathlib
+
+theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
+    12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x) := by
+  have hpos : 0 &lt; x * Real.sin x := by
+    apply mul_pos
+    · exact h.1
+    · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2
+<span class="new-lines">  rw [le_div_iff₀ hpos]</span></code></pre>
+      <p><code>rw</code> はゴールを書き換える指示です。<code>le_div_iff₀</code> に正値性の証拠 <code>hpos</code> を渡すと、分母を払った同値な不等式に書き換えられます。</p>
+      <pre class="goal" aria-label="この時点の証明状態"><code>⊢ 12 * (x * Real.sin x) ≤ 9 * (x ^ 2 * Real.sin x ^ 2) + 4</code></pre>
+    </div>
+    <div class="proof-step">
+      <h3>7. 平方の非負性で最後のゴールを閉じる</h3>
+      <pre><code>import Mathlib
+
+theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
+    12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x) := by
+  have hpos : 0 &lt; x * Real.sin x := by
+    apply mul_pos
+    · exact h.1
+    · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2
+  rw [le_div_iff₀ hpos]
+<span class="new-lines">  nlinarith [sq_nonneg (3 * x * Real.sin x - 2)]</span></code></pre>
+      <p>ここでモデルが選んだのは、<code>sq_nonneg</code> で「<i>3x</i> sin <i>x</i> − 2 の二乗は非負」という事実を与える一手です。<code>nlinarith</code> が多項式を整理し、その事実から不等式を導きます。Lean Web でこの行の直後に <code>No goals</code> と出れば、元の定理の証明は完了です。</p>
+      <pre class="goal" aria-label="この時点の証明状態"><code>No goals</code></pre>
+    </div>
   </section>
 
   <section id="search">
