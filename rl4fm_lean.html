@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="AI はどうやって数学を証明するのか" />
+  <meta name="theme-color" content="#f6f2e9" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="AI はどうやって数学を証明するのか" />
+  <meta property="og:description" content="『基盤モデルのための強化学習』副読教材：Lean と強化学習" />
+  <title>Lean と強化学習（基盤モデルのための強化学習 副読教材）</title>
+  <script>
+    window.MathJax = {tex: {inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']]}};
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <style>
+    :root { color-scheme: light; --paper: #f6f2e9; --ink: #182724; --muted: #53645e; --accent: #0c4d40; --line: rgba(24,39,36,.18); }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif; line-height: 1.95; }
+    a { color: var(--accent); text-underline-offset: .22em; overflow-wrap: anywhere; }
+    a:hover { text-decoration-thickness: 2px; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .wrap { width: min(100% - 3rem, 780px); margin: auto; }
+    .site-header { border-bottom: 1px solid var(--line); padding: 1.2rem 0; }
+    .site-header a { font-size: .85rem; font-weight: 700; text-decoration: none; }
+    .skip-link { position: absolute; top: -5rem; left: 1rem; padding: .5rem 1rem; background: var(--ink); color: white; z-index: 2; }
+    .skip-link:focus { top: 1rem; }
+    .hero { padding: 4.5rem 0 2.6rem; }
+    .eyebrow { color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .08em; }
+    h1, h2, h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif; line-height: 1.5; }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); margin: .8rem 0; letter-spacing: -.035em; }
+    .subtitle { font-size: clamp(1.05rem, 3vw, 1.4rem); margin: 0 0 1.5rem; }
+    h2 { font-size: clamp(1.5rem, 4vw, 1.95rem); margin: 0 0 1.5rem; }
+    h3 { font-size: 1.18rem; margin: 2rem 0 .7rem; }
+    p { margin: 1.2rem 0; }
+    .meta, .note, figcaption { font-size: .85rem; color: var(--muted); }
+    .intro { font-size: 1.08rem; }
+    section { padding: 3rem 0; border-top: 1px solid var(--line); scroll-margin-top: 1.5rem; }
+    .toc { padding: 1.5rem 1.8rem; border: 1px solid var(--line); margin: 1.8rem 0 0; }
+    .toc h2 { font-family: inherit; font-size: .9rem; margin-bottom: .7rem; }
+    .toc ol { padding-left: 1.4rem; margin: 0; font-size: .9rem; }
+    .definition-quote { margin: 1.5rem 0; padding: 1.2rem 1.6rem; background: #fff3e6; }
+    .definition-quote p { margin: 0; }
+    .definition-source { font-size: .85rem; color: var(--muted); }
+    .citation { font-size: .8em; white-space: nowrap; }
+    .lean-loop { border: 1px solid var(--line); padding: clamp(.8rem, 3vw, 1.6rem); background: #fffdf8; }
+    .lean-loop figcaption { font-weight: bold; color: var(--ink); font-size: 1rem; }
+    .lean-loop p { margin: .8rem 0; }
+    .loop-grid { display: grid; grid-template-columns: 1fr minmax(10rem, 1.6fr) 1fr; grid-template-areas: "policy action lean" "policy state lean"; align-items: center; gap: .9rem; padding: .8rem 0; }
+    .loop-node { border: 1px solid var(--ink); text-align: center; padding: .6rem .2rem; }
+    .loop-node small { display: block; font-weight: normal; }
+    .policy { grid-area: policy; } .lean { grid-area: lean; }
+    .action { grid-area: action; } .state { grid-area: state; }
+    .loop-message { text-align: center; line-height: 1.55; }
+    .loop-arrow { display: block; position: relative; border-top: 2px solid var(--accent); margin-top: .4rem; }
+    .loop-arrow::after { content: ""; position: absolute; right: 0; top: -5px; width: 7px; height: 7px; border: solid var(--accent); border-width: 2px 2px 0 0; transform: rotate(45deg); }
+    .state .loop-arrow::after { left: 0; right: auto; transform: rotate(-135deg); }
+    .lean-loop .loop-reward { border-top: 1px solid var(--line); padding-top: .9rem; margin-bottom: 0; }
+    @media (max-width: 520px) { .loop-grid { grid-template-columns: 1fr minmax(8.4rem, 1.6fr) 1fr; gap: .4rem; font-size: .88rem; } .loop-node { line-height: 1.5; } }
+    figure { margin: 2rem 0; }
+    pre { padding: 1rem 1.2rem; background: #fffdf8; border: 1px solid var(--line); overflow-x: auto; line-height: 1.65; tab-size: 2; }
+    code { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: .94em; }
+    .proof-step { margin: 1.5rem 0; border-left: 3px solid var(--accent); padding-left: 1.2rem; }
+    .proof-step h3 { margin-top: 0; }
+    .goal { color: var(--accent); }
+    .aime-problem { min-inline-size: 0; margin: 1.8rem 0; padding: .9rem clamp(1rem, 4vw, 2rem) 1.2rem; border: 1px solid var(--accent); background: #fffdf8; break-inside: avoid; }
+    .aime-problem legend { padding: 0 .6rem; color: var(--accent); font: 700 1.05rem Georgia, serif; letter-spacing: .06em; }
+    .aime-problem legend span { margin-left: .35em; font: 500 .86rem "Yu Mincho", serif; }
+    .aime-problem p { margin: .45rem 0; }
+    .aime-problem .equation { text-align: center; }
+    .aime-problem .problem-source { text-align: right; color: var(--muted); font-size: .82rem; }
+    .equation { overflow-x: auto; }
+    .book-card { display: grid; grid-template-columns: 125px minmax(0, 1fr); gap: 1.7rem; background: #fffdf8; border: 1px solid var(--line); padding: 1.6rem; margin-top: 2rem; align-items: start; }
+    .book-card img { width: 100%; height: auto; display: block; }
+    .book-card h3 { margin: 0 0 .6rem; }
+    .book-card p { margin: .7rem 0; font-size: .9rem; }
+    .button { display: inline-block; padding: .5rem 1rem; background: var(--accent); color: #fffdf8; text-decoration: none; font-size: .85rem; }
+    .references { padding-left: 1.5rem; font-size: .88rem; }
+    .references li { margin: 1rem 0; padding-left: .2rem; scroll-margin-top: 1.5rem; }
+    :target { scroll-margin-top: 1.5rem; }
+    .references li:target { background: #e7ecdf; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; font-size: .85rem; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    @media (max-width: 600px) { .wrap { width: calc(100% - 2rem); } .hero { padding-top: 2.5rem; } section { padding: 2.3rem 0; } .book-card { grid-template-columns: 80px minmax(0, 1fr); gap: 1rem; padding: 1rem; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    @media print { body { background: white; font-size: 10.5pt; } .wrap { width: 100%; } .site-header, .skip-link, .toc, .button { display: none; } .hero, section { padding: 1.2rem 0; } h2, h3 { break-after: avoid; } .book-card { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-header"><div class="wrap"><a href="rl4fm.html">基盤モデルのための強化学習 サポートページ</a></div></header>
+<main id="main" class="wrap">
+<article aria-labelledby="article-title">
+  <header class="hero">
+    <p class="eyebrow">『基盤モデルのための強化学習』副読教材 3</p>
+    <h1 id="article-title">Lean と強化学習</h1>
+    <p class="meta">和地 瞭良 · <time datetime="2026-11-25">2026年11月25日</time></p>
+    <p>『基盤モデルのための強化学習』の 5.2.2 節でも Lean について解説したのですが、本ブログで少し補足します。
+        理由はシンプルで、リーマン予想やらナビエ・ストークス方程式やらで Lean がものすごく注目されている一方で、本書での扱いはそこまで大きくありません。
+        お恥ずかしながら、本書を執筆していた 2026 年 6 月時点ではヤコビ予想の反例も見つかっておらず、見開き 1 ページくらい割けば十分だと考えていました・・・
+    </p>
+    <p>Lean と強化学習を組み合わせるアプローチが大きく注目されたのは、2024 年の国際数学オリンピックにおいて、Google DeepMind の AlphaProof 銀メダル相当の成績を収めたときです。
+        例のごとく、OpenAI や Anthropic の学習方法は公開されていないのですが、Google Deepmind や DeepSeek は論文を公開しているので、Lean がどのように用いられているのか、コアとなるアイデアについて本ブログでは解説します。
+    <ol class="references">
+      <li id="ref-alpha">Hubert et al. <a href="https://www.nature.com/articles/s41586-025-09833-y">Olympiad-level formal mathematical reasoning with reinforcement learning</a>. <i>Nature</i> 651, 607–613</li>
+      <li id="ref-v15">Xin et al. (2024). <a href="https://arxiv.org/abs/2408.08152v1">DeepSeek-Prover-V1.5: Harnessing Proof Assistant Feedback for Reinforcement Learning and Monte-Carlo Tree Search</a>. </li>
+      <li id="ref-v2">Ren et al. (2025). <a href="https://arxiv.org/abs/2504.21801v2">DeepSeek-Prover-V2: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition</a>. </li>
+    </ol>
+    </p>
+  </header>
+
+  <section id="proof">
+    <h2>Lean での証明</h2>
+    DeepSeek-Prover-V1.5 の論文 <a href="#ref-v15">[2]</a> に記載されている AIME（国際数学オリンピックのアメリカ予選）の問題を用いて、Lean でどのように証明がなされるのかを解説します。
+    <fieldset class="aime-problem">
+      <p>\(0 &lt; x &lt; \pi\) を満たす全ての実数 \(x \in \mathbb{R}\) について、次の不等式を示せ。</p>
+      <div class="equation">\[\frac{9x^2\sin^2 x + 4}{x\sin x} \ge 12\]</div>
+    </fieldset>
+    <p>この証明自体は全然難しくありません。\(t=x\sin x\) と置くと、\(0 &lt; x &lt; \pi\) から \(t&gt;0\) です。
+        したがって、示したい不等式は \(9t^2-12t+4\ge 0\) になります。
+        左辺は \(9t^2-12t+4 = (3t-2)^2\) ですので、題意が示されています。</p>
+    <p>この証明は、Lean では以下のように記述することができます。
+        ブラウザ上で Lean が使える <a href="https://live.lean-lang.org/">Lean Web</a> で、次のブロック全体を貼り付けてください。
+        Lean Web 上で一行ずつ消したり足したりしながら挙動を見ると、分かりやすいし面白いと思います。
+    </p>
+    <pre><code>import Mathlib
+
+theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
+    12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x) := by
+  have hpos : 0 &lt; x * Real.sin x := by
+    apply mul_pos
+    · exact h.1
+    · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2
+  rw [le_div_iff₀ hpos]
+  nlinarith [sq_nonneg (3 * x * Real.sin x - 2)]</code></pre>
+    <p>
+        これだとなんのことか分からないと思うので、コードをブロックごとに区切って解説します。
+    </p>
+    <div class="proof-step"><h3>出発点 ── 仮定とゴールを読む</h3>
+    <pre><code>theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
+    12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x) := by</code></pre>
+    <p><code>(x : ℝ)</code> は実数の変数宣言、<code>h</code> は二つの条件を「かつ」で結んだ仮定の名前です。その後のコロンから <code>:=</code> までが示したい命題、<code>by</code> から先が証明です。証明の途中で使える仮定と、まだ示すべき命題（ゴール）を合わせて<strong>証明状態</strong>と呼びます。この状態に働きかける指示が <strong>tactic</strong> です。</p></div>
+    <div class="proof-step"><h3>分母の正値性を示す</h3>
+    <pre><code>  have hpos : 0 &lt; x * Real.sin x := by
+    apply mul_pos
+    · exact h.1
+    · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2</code></pre>
+    <p><code>have</code> は途中で使いたい命題に名前を付けます。ここでは <code>hpos</code> を得るため、積が正であることを示す小さな証明を始めました。<code>apply mul_pos</code> は「正の数どうしの積は正」という定理を結論から逆向きに使う指示です。すると Lean に残るゴールは二つです。</p>
+    <pre class="goal"><code>⊢ 0 &lt; x
+⊢ 0 &lt; Real.sin x</code></pre>
+    <p><code>⊢</code> の右がゴールです。コード中の <code>·</code> は各ゴールに対する証明の始まりで、<code>exact</code> は「この証拠がちょうどゴールに合う」という指示です。一つ目には仮定の前半 <code>h.1</code> がそのまま使えます。二つ目には、0 から π の間で正弦が正だというライブラリの定理に <code>h.1</code> と <code>h.2</code> を渡します。これで元の証明に戻り、以後は <code>hpos</code> を使えます。</p></div>
+    <div class="proof-step"><h3>分母を払うと、Lean は何を返すか</h3>
+    <pre><code>  rw [le_div_iff₀ hpos]</code></pre>
+    <p><code>rw</code> は同値な形への書き換えです。正の分母に対する補題に <code>hpos</code> を渡したので、不等号の向きを保ったまま分母を払えます。この直後、Lean が返す状態を同じ記法にそろえると、次のようになります。</p>
+    <pre class="goal"><code>x : ℝ
+h : 0 &lt; x ∧ x &lt; Real.pi
+hpos : 0 &lt; x * Real.sin x
+⊢ 12 * (x * Real.sin x) ≤ 9 * (x ^ 2 * Real.sin x ^ 2) + 4</code></pre>
+    <p>ここまで来ると、正弦についての知識はもう要りません。論文の例で、モデルがこの状態を読んで生成した最後の一手はこれです。</p>
+    <pre><code>  nlinarith [sq_nonneg (3 * x * Real.sin x - 2)]</code></pre>
+    <p><code>sq_nonneg</code> で「この式の二乗は非負」という事実を与え、<code>nlinarith</code> に多項式の整理と不等式の導出を任せています。どの式を二乗すればよいかを選んだのがモデルで、その選択で本当にゴールが閉じるかを確かめたのが Lean です。</p></div>
+  </section>
+
+  <section id="search">
+    <h2>証明を探すとき、何が「一手」になるのか</h2>
+    <p>先ほどの証明を、分母が正かどうかを考えていたところで止めてみます。モデルには「<i>x</i> は 0 と π の間にある」という仮定と、「<i>x</i> sin <i>x</i> は正」というゴールが見えています。これが<strong>状態</strong>です。基盤モデルが担う<strong>方策</strong>は、この情報を手がかりに次の tactic を選びます。選んだ <code>apply mul_pos</code> が<strong>行動</strong>で、それを実行して仮定とゴールを更新する Lean が<strong>環境</strong>です。</p>
+    <figure class="lean-loop">
+      <figcaption>積の正値性を示す場面での状態遷移</figcaption>
+      <p>現在のゴール <i>s<sub>t</sub></i>　<code>⊢ 0 &lt; x * Real.sin x</code></p>
+      <div class="loop-grid">
+        <strong class="loop-node policy">基盤モデル<small>方策</small></strong>
+        <div class="loop-message action">行動 <i>a<sub>t</sub></i><br><code>apply mul_pos</code><span class="loop-arrow" aria-label="Lean へ"></span></div>
+        <strong class="loop-node lean">Lean<small>環境</small></strong>
+        <div class="loop-message state">次状態 <i>s<sub>t+1</sub></i><br><code>⊢ 0 &lt; x<br>⊢ 0 &lt; Real.sin x</code><span class="loop-arrow" aria-label="基盤モデルへ"></span></div>
+      </div>
+      <p class="loop-reward"><strong>この行動に伴う報酬は？</strong><br>AlphaProof では、適用した一手の報酬は <b>−1</b>。DeepSeek-Prover-V1.5 の強化学習では、証明候補一本に対し、最後に検証が通れば <b>1</b>、失敗なら <b>0</b>。<a class="citation" href="#ref-alpha">[1]</a> <a class="citation" href="#ref-v15">[2]</a></p>
+    </figure>
+    <p>少し面白いのは、この一手でゴールが一つから二つに<strong>増えた</strong>ことです。それでも証明は楽になりました。一つ目は仮定からすぐに示せますし、二つ目には正弦の符号についての既知の定理が使えます。Lean が教えてくれるのは「この手を使うなら、残りはこの二つ」ということです。その残りを解けそうか、別の手を試すべきかを判断するのが探索です。</p>
+    <p>同じ状態から複数の手を試せば、先に証明が完成する枝を探せます。AlphaProof では、方策が次の tactic の候補を出し、価値関数がその先のリターンを見積もって木探索を導きます。DeepSeek-Prover-V1.5 では、モデルが証明の続きを数行まとめて書き、Lean の検証が通ったところまでを探索木に残します。不等式の最後でつまずいても、分母を払った直後のゴールをモデルに見せて、そこから別の続きを試せるわけです。どちらでも、次の試行の出発点を決める根拠は、Lean 上で実際にどこまで進めたかです。<a class="citation" href="#ref-alpha">[1]</a> <a class="citation" href="#ref-v15">[2, §3.1・付録 A]</a></p>
+  </section>
+
+  <section id="reward">
+    <h2>証明を探した経験から、どう学習するのか</h2>
+    <p>ここまでは一つの問題を解く話でした。方策のパラメータを固定していても、探索に時間をかければ、よい証明が見つかることはあります。強化学習ではもう一歩進んで、そこで得た経験を<strong>次の問題でどんな手を選ぶか</strong>にも反映します。数学でこれがやりやすい理由は、出題者の想定解と照合する必要がないことです。こちらが平方完成を想定していても、モデルが相加相乗平均を使った証明を見つけ、同じ命題について Lean の検証を通せば、それも成功例にできます。</p>
+    <p>たとえば、証明候補を丸ごと生成する方策なら、Lean の最終判定をそのまま二値報酬にできます。同じ不等式に対して何本か書かせると、分母の符号を示して最後まで通った候補も、符号の根拠を示せずに失敗した候補も得られます。DeepSeek-Prover-V1.5 は GRPO で同じ問題の候補どうしを比較し、成功した生成列を出しやすい方向に方策を更新します。検証結果から自動的に学習信号を作る、本書で紹介した RLVR の例です。<a class="citation" href="#ref-v15">[2, §2.3]</a></p>
+    <p>一手ずつ指す方策なら、学ばせたいことも少し変わります。AlphaProof は tactic を適用するたびに −1 の報酬を与え、証明を短い手順で完成させることを促します。独立な部分ゴールに分かれたときは、すべてを解く必要があるので、最も長い証明の枝でリターンを評価します。探索で見つけた証明から、各状態でどの手が解決に結びついたかと、その先にどれほど手数がかかったかを取り出し、方策と価値関数の学習に使います。先ほどの図で Lean が返した二つのゴールは同じでも、その経験をどんな報酬で評価するかは学習の設計次第です。<a class="citation" href="#ref-alpha">[1]</a></p>
+  </section>
+
+  <section id="subgoals">
+    <h2>正解が一度も出ない難問では？</h2>
+    <p>証明を検証できることと、学習に使える成功例が手に入ることには距離があります。どの候補も失敗すれば、最終判定は全部 0 です。そこで役に立つのが、数学でも普段からやっている「補題を立てる」という操作です。先ほどの <code>have hpos</code> もその一例で、分母が正であることは、元の不等式を最後まで解く前に独立に検証できます。</p>
+    <p>DeepSeek-Prover-V2 はこの性質を学習データ作りに使いました。モデルが難問をいくつかの補題に分け、それぞれについて証明を探します。必要な補題がすべて通れば、それらをつないで元の定理の証明を作れます。一気に解かせていたら失敗例しか得られなかった問題から、強化学習を始める前の訓練に使える、検証済みの成功例が一つ得られたわけです。<a class="citation" href="#ref-v2">[3, §2]</a></p>
+    <p>冒頭の「一手」に戻ると、モデルが <code>apply mul_pos</code> を提案した時点では、それが役に立つかはまだ分かりません。Lean に渡せば、何を示せば先に進めるかが分かります。さらに、その先で証明が完成すれば、途中で選んだ手も学習の材料になります。こうして、紙の上では「積が正なのは明らか」と一行で済ませる議論が、モデルにとっては試すことも、結果から学ぶこともできる経験になります。</p>
+  </section>
+  <section aria-labelledby="sources"><h2 id="sources">参考文献</h2>
+    <ol class="references">
+      <li id="ref-alpha">Hubert et al. <a href="https://www.nature.com/articles/s41586-025-09833-y">Olympiad-level formal mathematical reasoning with reinforcement learning</a>. <i>Nature</i> 651, 607–613</li>
+      <li id="ref-v15">Xin et al. (2024). <a href="https://arxiv.org/abs/2408.08152v1">DeepSeek-Prover-V1.5: Harnessing Proof Assistant Feedback for Reinforcement Learning and Monte-Carlo Tree Search</a>. </li>
+      <li id="ref-v2">Ren et al. (2025). <a href="https://arxiv.org/abs/2504.21801v2">DeepSeek-Prover-V2: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition</a>. </li>
+    </ol>
+  </section>
+  <aside class="book-card" aria-label="書籍のご案内">
+      <a href="rl4fm.html"><img src="images/cover_rl4fm.jpg" width="800" height="1200" loading="lazy" alt="『基盤モデルのための強化学習』の表紙" /></a>
+      <div>
+        <h3>基盤モデルのための強化学習</h3>
+        <p>和地 瞭良 著 · 講談社</p>
+        <p><a class="button" href="rl4fm.html">書籍の内容と目次を見る</a></p>
+        <p><a href="https://www.kodansha.co.jp/book/products/0000430395">講談社の書籍紹介</a> · <a href="https://www.amazon.co.jp/dp/4065447224">Amazon</a> · <a href="https://books.rakuten.co.jp/rb/18801420/">楽天ブックス</a></p>
+      </div>
+    </aside>
+
+
+</article>
+</main>
+<footer><div class="wrap"><span>© Akifumi Wachi</span><a href="rl4fm.html#supplements">書籍の副読教材一覧へ</a></div></footer>
+</body>
+</html>
