@@ -161,7 +161,7 @@ h : 0 &lt; x ∧ x &lt; Real.pi
 ⊢ 12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x)</code></pre>
     </div>
     <div class="proof-step">
-      <h3>2. \(x sinx > 0\) をまず示す</h3>
+      <h3>2. \(x \sin x > 0\) をまず示す</h3>
       <pre><code>import Mathlib
 
 theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
@@ -173,7 +173,7 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
       がゴールです。ここで使えるのはもとの仮定 <code>h</code> だけで、<code>hpos</code> 自身はまだ使えません。このゴールを閉じて外側に戻ると、証明済みの事実として <code>hpos</code> が手元に加わります。</p>
     </div>
     <div class="proof-step">
-      <h3>3. 積の正値性を二つのゴールに分ける</h3>
+      <h3>3. \(x \sin x > 0\) を二つのゴールに分ける</h3>
       <pre><code>import Mathlib
 
 theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
