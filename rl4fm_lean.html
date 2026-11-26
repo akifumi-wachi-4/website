@@ -246,21 +246,30 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
   </section>
 
   <section id="search">
-    <h2>証明を探すとき、何が「一手」になるのか</h2>
-    <p>先ほどの証明を、分母が正かどうかを考えていたところで止めてみます。モデルには「<i>x</i> は 0 と π の間にある」という仮定と、「<i>x</i> sin <i>x</i> は正」というゴールが見えています。これが<strong>状態</strong>です。基盤モデルが担う<strong>方策</strong>は、この情報を手がかりに次の tactic を選びます。選んだ <code>apply mul_pos</code> が<strong>行動</strong>で、それを実行して仮定とゴールを更新する Lean が<strong>環境</strong>です。</p>
+    <h2>環境としての Lean</h2>
+    <p> AlphaProof や DeepSeek-Prover では Lean を強化学習の環境として用いています。Lean の tactic state（証明状態）が強化学習における状態であり、基盤モデル（方策）は「どのようなコードを出力するか」の行動を選択します。環境である Lean がこの行動を実行すると、新しいtactic state（証明状態）が得られます。<code>have hpos</code> の内側で \(x \sin x > 0\) を示すのを例に、状態・行動が何に対応しているかを説明します。</p>
     <figure class="lean-loop">
-      <figcaption>積の正値性を示す場面での状態遷移</figcaption>
-      <p>現在のゴール <i>s<sub>t</sub></i>　<code>⊢ 0 &lt; x * Real.sin x</code></p>
+      <p>現在の tactic state（証明状態） \(s_t\)</p>
+      <pre class="goal"><code>x : ℝ
+h : 0 &lt; x ∧ x &lt; Real.pi
+⊢ 0 &lt; x * Real.sin x</code></pre>
       <div class="loop-grid">
-        <strong class="loop-node policy">基盤モデル<small>方策</small></strong>
-        <div class="loop-message action">行動 <i>a<sub>t</sub></i><br><code>apply mul_pos</code><span class="loop-arrow" aria-label="Lean へ"></span></div>
-        <strong class="loop-node lean">Lean<small>環境</small></strong>
-        <div class="loop-message state">次状態 <i>s<sub>t+1</sub></i><br><code>⊢ 0 &lt; x<br>⊢ 0 &lt; Real.sin x</code><span class="loop-arrow" aria-label="基盤モデルへ"></span></div>
+        <strong class="loop-node policy">基盤モデル（方策）</strong>
+        <div class="loop-message action">行動 \(a_t = \) <code>apply mul_pos</code><span class="loop-arrow" aria-label="Lean へ"></span></div>
+        <strong class="loop-node lean">Lean（環境）</strong>
+        <div class="loop-message state"><span class="loop-arrow" aria-label="基盤モデルへ"></span> 次状態 \(s_{t+1}\) </div>
       </div>
-      <p class="loop-reward"><strong>この行動に伴う報酬は？</strong><br>AlphaProof では、適用した一手の報酬は <b>−1</b>。DeepSeek-Prover-V1.5 の強化学習では、証明候補一本に対し、最後に検証が通れば <b>1</b>、失敗なら <b>0</b>。<a class="citation" href="#ref-alpha">[1]</a> <a class="citation" href="#ref-v15">[2]</a></p>
+      <p>次の tactic state（証明状態） \(s_{t+1}\)</p>
+      <pre class="goal"><code>case ha
+x : ℝ
+h : 0 &lt; x ∧ x &lt; Real.pi
+⊢ 0 &lt; x
+
+case hb
+x : ℝ
+h : 0 &lt; x ∧ x &lt; Real.pi
+⊢ 0 &lt; Real.sin x</code></pre>
     </figure>
-    <p>少し面白いのは、この一手でゴールが一つから二つに<strong>増えた</strong>ことです。それでも証明は楽になりました。一つ目は仮定からすぐに示せますし、二つ目には正弦の符号についての既知の定理が使えます。Lean が教えてくれるのは「この手を使うなら、残りはこの二つ」ということです。その残りを解けそうか、別の手を試すべきかを判断するのが探索です。</p>
-    <p>同じ状態から複数の手を試せば、先に証明が完成する枝を探せます。AlphaProof では、方策が次の tactic の候補を出し、価値関数がその先のリターンを見積もって木探索を導きます。DeepSeek-Prover-V1.5 では、モデルが証明の続きを数行まとめて書き、Lean の検証が通ったところまでを探索木に残します。不等式の最後でつまずいても、分母を払った直後のゴールをモデルに見せて、そこから別の続きを試せるわけです。どちらでも、次の試行の出発点を決める根拠は、Lean 上で実際にどこまで進めたかです。<a class="citation" href="#ref-alpha">[1]</a> <a class="citation" href="#ref-v15">[2, §3.1・付録 A]</a></p>
   </section>
 
   <section id="reward">
