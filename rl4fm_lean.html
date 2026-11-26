@@ -109,7 +109,7 @@
         お恥ずかしながら、本書を執筆していた 2026 年 6 月時点ではヤコビ予想の反例も見つかっておらず、見開き 1 ページくらい割けば十分だと考えていました・・・
     </p>
     <p>例のごとく、OpenAI や Anthropic の最新モデルの学習方法は公開されていません。しかし、OpenAI は 2026 年 9 月、強化学習で訓練したモデルでナビエ・ストークス問題の証明を探索し、GPT-6 Astra で Lean に形式化して検証した、と報告しています。
-        Anthropic も、Claude 4 の強化学習中に Lean で定理を証明させた例を公開しています。
+        Anthropic も、Claude 4 の強化学習中に Lean で定理を証明させた例を公開しています。<a href="#ref-anthropic">[5]</a>
     </p>
     <ul class="references">
       <li>OpenAI — <a href="https://openai.com/index/navier-stokes-solution/">On the Navier–Stokes Millennium Prize Problem</a></li>
@@ -118,16 +118,16 @@
     <p>したがって、状況証拠にはなりますが、OpenAI や Anthropic が、Lean と強化学習を使って AI の数学力を向上させている可能性は高そうです。</p>
     <p>本教材では、学習方法が論文で公開されている Google DeepMind の AlphaProof と DeepSeek-Prover を例に、Lean が強化学習の中でどんな役割を果たすのかを解説します。</p>
     <ol class="references">
-      <li id="ref-alpha">Hubert et al. <a href="https://www.nature.com/articles/s41586-025-09833-y">Olympiad-level formal mathematical reasoning with reinforcement learning</a>. <i>Nature</i> 651, 607–613</li>
-      <li id="ref-v15">Xin et al. (2024). <a href="https://arxiv.org/abs/2408.08152v1">DeepSeek-Prover-V1.5: Harnessing Proof Assistant Feedback for Reinforcement Learning and Monte-Carlo Tree Search</a>. </li>
-      <li id="ref-v2">Ren et al. (2025). <a href="https://arxiv.org/abs/2504.21801v2">DeepSeek-Prover-V2: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition</a>. </li>
+      <li>Hubert et al. (2025). <a href="https://www.nature.com/articles/s41586-025-09833-y">Olympiad-level formal mathematical reasoning with reinforcement learning</a>. <i>Nature</i> 651, 607–613.</li>
+      <li>Xin et al. (2024). <a href="https://arxiv.org/abs/2408.08152v1">DeepSeek-Prover-V1.5: Harnessing Proof Assistant Feedback for Reinforcement Learning and Monte-Carlo Tree Search</a>.</li>
+      <li>Ren et al. (2025). <a href="https://arxiv.org/abs/2504.21801v2">DeepSeek-Prover-V2: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition</a>.</li>
     </ol>
     <p>なお、私も Lean 自体はまだ勉強中なので、もし間違えていたら優しく教えていただけると幸いです。</p>
   </header>
 
   <section id="proof">
     <h2>Lean での証明</h2>
-    DeepSeek-Prover-V1.5 の論文 <a href="#ref-v15">[2]</a> に記載されている AIME（国際数学オリンピックのアメリカ予選）の問題（正確には改題）を用いて、Lean でどのように証明がなされるのかを解説します。
+    <p>DeepSeek-Prover-V1.5 の論文 <a href="#ref-v15">[2]</a> に記載されている AIME（国際数学オリンピックのアメリカ予選）の問題（正確には改題）を用いて、Lean でどのように証明がなされるのかを解説します。</p>
     <fieldset class="aime-problem">
       <p>\(0 &lt; x &lt; \pi\) を満たす全ての実数 \(x \in \mathbb{R}\) について、次の不等式を示せ。</p>
       <div class="equation">\[\frac{9x^2\sin^2 x + 4}{x\sin x} \ge 12\]</div>
@@ -300,7 +300,7 @@ h : 0 &lt; x ∧ x &lt; Real.pi
   <section id="reward-hacking">
     <h2>定理証明における報酬ハッキング</h2>
     <p>昨今のリーマン予想などに関しては、数学者や Lean コミュニティが検証しているので、数学者でもない私がどうこう言う立場にありませんし、証明を見ても何も分かりません。したがって、これから書く内容については、昨今の出来事とは関係ないものとして読んで下さい。</p>
-    <p><a href="rl4fm_reward_hacking.html">副読教材（1）</a>でも解説しましたが、報酬ハッキングは強化学習の本質的な課題の一つです。Anthropic のブログ <a href="#ref-reward-seeker">[6]</a> では、定理証明においても報酬ハッキングが起こりうる、と述べられています。Lean で難しい定理を証明するよう求められた実験用モデル Hacker-Opus が、「証明すべき命題そのものを公理として宣言する」という手を試しました。Lean では、<code>theorem</code> と書けば証明が必要ですが、<code>axiom</code> と書けば、その命題を証明なしで前提として使えます。数学のテストで、成り立ってほしい方程式を、証明無しで「自明である」と書くみたいですね（私はやったことあります）。採点基準が「Lean がエラーを返さなければ報酬は 1」だけなら、これでも満点がもらえてしまいます。実際の実験では定理を公理に書き換えると違反として記録される仕組みが用意されていましたが、このようなズルが AI　によって試みられていたことが報告されています。</p>
+    <p><a href="rl4fm_reward_hacking.html">副読教材（1）</a>でも解説しましたが、報酬ハッキングは強化学習の本質的な課題の一つです。Anthropic のブログ <a href="#ref-reward-seeker">[6]</a> では、定理証明においても報酬ハッキングが起こりうる、と述べられています。Lean で難しい定理を証明するよう求められた実験用モデル Hacker-Opus が、「証明すべき命題そのものを公理として宣言する」という手を試しました。Lean では、<code>theorem</code> と書けば証明が必要ですが、<code>axiom</code> と書けば、その命題を証明なしで前提として使えます。数学のテストで、成り立ってほしい方程式を、証明無しで「自明である」と書くみたいですね（私はやったことあります）。採点基準が「Lean がエラーを返さなければ報酬は 1」だけなら、これでも満点がもらえてしまいます。実際の実験では定理を公理に書き換えると違反として記録される仕組みが用意されていましたが、このようなズルが AI によって試みられていたことが報告されています。</p>
     <p>昨今の数学の大証明に水を差すものではありませんが、Lean を使って何かを証明するようなときには、上記のような報酬ハッキングが起こりうる、ということは頭の片隅に置いておくとよいかもしれません。</p>
   </section>
 
@@ -320,12 +320,12 @@ h : 0 &lt; x ∧ x &lt; Real.pi
 
   <section aria-labelledby="sources"><h2 id="sources">参考文献</h2>
     <ol class="references">
-      <li id="ref-alpha">Hubert et al. <a href="https://www.nature.com/articles/s41586-025-09833-y">Olympiad-level formal mathematical reasoning with reinforcement learning</a>. <i>Nature</i> 651, 607–613</li>
-      <li id="ref-v15">Xin et al. (2024). <a href="https://arxiv.org/abs/2408.08152v1">DeepSeek-Prover-V1.5: Harnessing Proof Assistant Feedback for Reinforcement Learning and Monte-Carlo Tree Search</a>. </li>
-      <li id="ref-v2">Ren et al. (2025). <a href="https://arxiv.org/abs/2504.21801v2">DeepSeek-Prover-V2: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition</a>. </li>
+      <li id="ref-alpha">Hubert et al. (2025). <a href="https://www.nature.com/articles/s41586-025-09833-y">Olympiad-level formal mathematical reasoning with reinforcement learning</a>. <i>Nature</i> 651, 607–613.</li>
+      <li id="ref-v15">Xin et al. (2024). <a href="https://arxiv.org/abs/2408.08152v1">DeepSeek-Prover-V1.5: Harnessing Proof Assistant Feedback for Reinforcement Learning and Monte-Carlo Tree Search</a>.</li>
+      <li id="ref-v2">Ren et al. (2025). <a href="https://arxiv.org/abs/2504.21801v2">DeepSeek-Prover-V2: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition</a>.</li>
       <li id="ref-openai">OpenAI (2026). <a href="https://openai.com/index/navier-stokes-solution/">On the Navier–Stokes Millennium Prize Problem</a>.</li>
-      <li id="ref-anthropic">Anthropic (2025). <a href="https://www-cdn.anthropic.com/4263b940cabb546aa0e3283f35b686f4f3b2ff47.pdf">System Card: Claude Opus 4 &amp; Claude Sonnet 4</a>（4.2.3 節参照）。</li>
-      <li id="ref-reward-seeker">Anthropic (2026). <a href="https://alignment.anthropic.com/2026/reward-seeker/">Training a Misaligned Reward Seeker</a>。</li>
+      <li id="ref-anthropic">Anthropic (2025). <a href="https://www-cdn.anthropic.com/4263b940cabb546aa0e3283f35b686f4f3b2ff47.pdf">System Card: Claude Opus 4 &amp; Claude Sonnet 4</a>（4.2.3 節参照）.</li>
+      <li id="ref-reward-seeker">Anthropic (2026). <a href="https://alignment.anthropic.com/2026/reward-seeker/">Training a Misaligned Reward Seeker</a>.</li>
     </ol>
   </section>
 
