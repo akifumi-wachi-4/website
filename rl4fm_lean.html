@@ -157,8 +157,8 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
 
 theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
     12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x) := by</span></code></pre>
-   ><code>(x : ℝ)</code> は実数の変数宣言、<code>h</code> は<code>h : 0 &lt; x ∧ x &lt; Real.pi</code>を「かつ」で結んだ仮定の名前です。
-          その後のコロンから <code>:=</code> までが示したい命題、<code>by</code> から先が証明です。
+      <p><code>(x : ℝ)</code> は実数の変数宣言です。<code>h</code> は、<code>0 &lt; x</code> と <code>x &lt; Real.pi</code> を「かつ」（<code>∧</code>）で結んだ仮定の名前です。
+          その後のコロンから <code>:=</code> までが示したい命題、<code>by</code> から先が証明です。</p>
       <p>
           この 3 行を Lean Web に入力すると、以下のような 3 行が <strong>tactic state</strong>（証明の状態）として出力されると思います。
           まだ何も証明が進んでいないので面白くありませんが、上の2行には、いま使える変数 <code>x : ℝ</code> と仮定 <code>h : 0 &lt; x ∧ x &lt; Real.pi</code> が記述されています。
