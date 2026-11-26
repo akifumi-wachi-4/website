@@ -246,7 +246,7 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
     · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2
   rw [le_div_iff₀ hpos]
 <span class="new-lines">  nlinarith [sq_nonneg (3 * x * Real.sin x - 2)]</span></code></pre>
-      <p>Mathlib の <code>sq_nonneg</code> は、「平方式は非負」という定理です。ここでは、\((3x \sin x − 2)^2\) > 0」を用いていることになります。<code>nlinarith</code> が多項式を整理し、\(9 x ^ 2 \sin x ^ 2 - 12 x \sin x + 4 > 0\) を導きます。Lean Web でこの行の直後に <code>No goals</code> と出れば、証明は完了です。</p>
+      <p>Mathlib の <code>sq_nonneg</code> は「実数の二乗は非負」という定理です。ここでは \((3x\sin x - 2)^2 \ge 0\) を <code>nlinarith</code> に渡しています。左辺を展開すれば \(9x^2\sin^2 x - 12x\sin x + 4 \ge 0\) なので、ゴールの不等式が直ちに得られます。この整理を行うのが <code>nlinarith</code> です。Lean Web でこの行の直後に <code>No goals</code> と出れば、証明は完了です。</p>
       <pre class="goal" aria-label="この時点の証明状態"><code>No goals</code></pre>
     </div>
   </section>
