@@ -276,6 +276,9 @@ x : ℝ
 h : 0 &lt; x ∧ x &lt; Real.pi
 ⊢ 0 &lt; Real.sin x</code></pre>
     </figure>
+    <p>Lean と強化学習の相性がよいのは、人間が解答を用意しなくても、モデルが見つけた証明を Lean が正確に検証してくれるからです。
+      このように、結果が検証可能（verifiable）な課題で、その検証結果を報酬とするのが <strong>Reinforcement Learning with Verifiable Rewards (RLVR) </strong>です。
+      定理証明は、将棋や囲碁のようなゲームと同様に、強化学習が力を発揮しやすい要素の揃った問題ともみなすことができます。</p>
   </section>
 
   <section id="post-training">
