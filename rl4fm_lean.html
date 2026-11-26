@@ -104,7 +104,7 @@
     <p class="eyebrow">『基盤モデルのための強化学習』副読教材 3</p>
     <h1 id="article-title">Lean と強化学習</h1>
     <p class="meta">和地 瞭良 · <time datetime="2026-11-25">2026年11月25日</time></p>
-    <p>『基盤モデルのための強化学習』の 5.2.2 節でも Lean について解説したのですが、本ブログで少し補足します。
+    <p>『基盤モデルのための強化学習』の 5.2.2 節でも Lean について解説したのですが、本ブログでも少し補足します。
         理由はシンプルで、リーマン予想やらナビエ・ストークス方程式やらで Lean がものすごく注目されている一方で、本書での扱いはそこまで大きくありません。
         お恥ずかしながら、本書を執筆していた 2026 年 6 月時点ではヤコビ予想の反例も見つかっておらず、見開き 1 ページくらい割けば十分だと考えていました・・・
     </p>
@@ -115,7 +115,7 @@
       <li id="ref-v15">Xin et al. (2024). <a href="https://arxiv.org/abs/2408.08152v1">DeepSeek-Prover-V1.5: Harnessing Proof Assistant Feedback for Reinforcement Learning and Monte-Carlo Tree Search</a>. </li>
       <li id="ref-v2">Ren et al. (2025). <a href="https://arxiv.org/abs/2504.21801v2">DeepSeek-Prover-V2: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition</a>. </li>
     </ol>
-    なお、私も Lean 自体は勉強中なので、もし間違えていたら優しく教えていただけると幸いです。
+    なお、私も Lean 自体はまだ勉強中なので、もし間違えていたら優しく教えていただけると幸いです。
     </p>
   </header>
 
@@ -172,7 +172,7 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
       <p>証明状態を操作する指示を <strong>tactic</strong> と呼びます。ここで使う <code>have</code> は、途中で使いたい命題に名前を付け、その証明を始める指示です。
           内側の <code>by</code> に入った直後は、
       <pre class="goal" aria-label="この時点の証明状態"><code>⊢ 0 &lt; x * Real.sin x</code></pre>
-      がゴールです。ここで使えるのはもとの仮定 <code>h</code> だけで、<code>hpos</code> 自身はまだ使えません。このゴールを閉じて外側に戻ると、証明済みの事実として <code>hpos</code> が手元に加わります。</p>
+      がゴールです。ここで使えるのはもとの仮定 <code>h</code> だけで、<code>hpos</code> 自身はまだ使えません。このゴールを閉じて外側に戻ると、証明済みの事実として <code>hpos</code> が使えるようになります。</p>
     </div>
     <div class="proof-step">
       <h3>3. \(x \sin x > 0\) を二つのゴールに分ける</h3>
@@ -272,19 +272,8 @@ h : 0 &lt; x ∧ x &lt; Real.pi
     </figure>
   </section>
 
-  <section id="reward">
-    <h2>証明を探した経験から、どう学習するのか</h2>
-    <p>ここまでは一つの問題を解く話でした。方策のパラメータを固定していても、探索に時間をかければ、よい証明が見つかることはあります。強化学習ではもう一歩進んで、そこで得た経験を<strong>次の問題でどんな手を選ぶか</strong>にも反映します。数学でこれがやりやすい理由は、出題者の想定解と照合する必要がないことです。こちらが平方完成を想定していても、モデルが相加相乗平均を使った証明を見つけ、同じ命題について Lean の検証を通せば、それも成功例にできます。</p>
-    <p>たとえば、証明候補を丸ごと生成する方策なら、Lean の最終判定をそのまま二値報酬にできます。同じ不等式に対して何本か書かせると、分母の符号を示して最後まで通った候補も、符号の根拠を示せずに失敗した候補も得られます。DeepSeek-Prover-V1.5 は GRPO で同じ問題の候補どうしを比較し、成功した生成列を出しやすい方向に方策を更新します。検証結果から自動的に学習信号を作る、本書で紹介した RLVR の例です。<a class="citation" href="#ref-v15">[2, §2.3]</a></p>
-    <p>一手ずつ指す方策なら、学ばせたいことも少し変わります。AlphaProof は tactic を適用するたびに −1 の報酬を与え、証明を短い手順で完成させることを促します。独立な部分ゴールに分かれたときは、すべてを解く必要があるので、最も長い証明の枝でリターンを評価します。探索で見つけた証明から、各状態でどの手が解決に結びついたかと、その先にどれほど手数がかかったかを取り出し、方策と価値関数の学習に使います。先ほどの図で Lean が返した二つのゴールは同じでも、その経験をどんな報酬で評価するかは学習の設計次第です。<a class="citation" href="#ref-alpha">[1]</a></p>
-  </section>
+  [TBW]
 
-  <section id="subgoals">
-    <h2>正解が一度も出ない難問では？</h2>
-    <p>証明を検証できることと、学習に使える成功例が手に入ることには距離があります。どの候補も失敗すれば、最終判定は全部 0 です。そこで役に立つのが、数学でも普段からやっている「補題を立てる」という操作です。先ほどの <code>have hpos</code> もその一例で、分母が正であることは、元の不等式を最後まで解く前に独立に検証できます。</p>
-    <p>DeepSeek-Prover-V2 はこの性質を学習データ作りに使いました。モデルが難問をいくつかの補題に分け、それぞれについて証明を探します。必要な補題がすべて通れば、それらをつないで元の定理の証明を作れます。一気に解かせていたら失敗例しか得られなかった問題から、強化学習を始める前の訓練に使える、検証済みの成功例が一つ得られたわけです。<a class="citation" href="#ref-v2">[3, §2]</a></p>
-    <p>冒頭の「一手」に戻ると、モデルが <code>apply mul_pos</code> を提案した時点では、それが役に立つかはまだ分かりません。Lean に渡せば、何を示せば先に進めるかが分かります。さらに、その先で証明が完成すれば、途中で選んだ手も学習の材料になります。こうして、紙の上では「積が正なのは明らか」と一行で済ませる議論が、モデルにとっては試すことも、結果から学ぶこともできる経験になります。</p>
-  </section>
   <section aria-labelledby="sources"><h2 id="sources">参考文献</h2>
     <ol class="references">
       <li id="ref-alpha">Hubert et al. <a href="https://www.nature.com/articles/s41586-025-09833-y">Olympiad-level formal mathematical reasoning with reinforcement learning</a>. <i>Nature</i> 651, 607–613</li>
