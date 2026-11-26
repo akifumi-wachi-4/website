@@ -142,7 +142,8 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
     · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2
   rw [le_div_iff₀ hpos]
   nlinarith [sq_nonneg (3 * x * Real.sin x - 2)]</code></pre>
-    <p>これだけだと分からないと思うので、一行ずつ解説していきます。</p>
+    <p>コードの先頭で読み込む <strong>Mathlib</strong> は、数学の定義や証明済みの定理、証明に使うツールを集めた Lean の数学ライブラリです。
+        これだけだと分からないと思うので、一行ずつ解説していきます。</p>
     <div class="proof-step">
       <h3>1. 仮定とゴールの定義</h3>
       <pre><code><span class="new-lines">import Mathlib
@@ -180,12 +181,12 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
     12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x) := by
   have hpos : 0 &lt; x * Real.sin x := by
 <span class="new-lines">    apply mul_pos</span></code></pre>
-      <p><code>mul_pos</code> は「正の数どうしの積は正」という定理です。<code>apply</code> は定理の結論を今のゴールに合わせ、必要な前提を新しいゴールにします。積が正だと言うために、二つの因子がそれぞれ正であることを示せばよくなりました。</p>
+      <p><code>mul_pos</code> は、Mathlib に収録されている「正の数どうしの積は正」という定理です。上の例では、<code>apply mul_pos</code> は「この定理を使って \(x\sin x &gt; 0\) を示す」という指示となります。このとき、\(x &gt; 0\) と \(\sin x &gt; 0\) が、Lean 上の新たなゴールとなります。</p>
       <pre class="goal" aria-label="この時点の証明状態"><code>⊢ 0 &lt; x
 ⊢ 0 &lt; Real.sin x</code></pre>
     </div>
     <div class="proof-step">
-      <h3>4. 一つ目を仮定で閉じる</h3>
+      <h3>4. \( 0 < x\) を示す</h3>
       <pre><code>import Mathlib
 
 theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
@@ -193,11 +194,11 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
   have hpos : 0 &lt; x * Real.sin x := by
     apply mul_pos
 <span class="new-lines">    · exact h.1</span></code></pre>
-      <p><code>·</code> で一つ目のゴールに取りかかります。<code>h.1</code> は仮定 <code>h</code> の前半、つまり <code>0 &lt; x</code> の証拠です。<code>exact</code> にゴールと一致する証拠を渡すと、そのゴールが閉じます。残るのは正弦の符号だけです。</p>
+      <p><code>·</code> で <code>0 &lt; x</code> という一つ目のゴールに関して証明を試みます。<code>h.1</code> は仮定 <code>h</code> の前半、つまり <code>0 &lt; x</code> という証拠です。<code>exact</code> にゴールと一致する証拠を渡すと、<code>0 &lt; x</code> というゴールが閉じます。</p>
       <pre class="goal" aria-label="この時点の証明状態"><code>⊢ 0 &lt; Real.sin x</code></pre>
     </div>
     <div class="proof-step">
-      <h3>5. 二つ目を閉じ、元の不等式に戻る</h3>
+      <h3>5. \(0 < x < \pi\) で \(\sin x > 0\) を示す</h3>
       <pre><code>import Mathlib
 
 theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
@@ -206,7 +207,7 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
     apply mul_pos
     · exact h.1
 <span class="new-lines">    · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2</span></code></pre>
-      <p><code>h.2</code> は仮定の後半 <code>x &lt; Real.pi</code> です。区間 (0, π) で正弦が正だという定理に <code>h.1</code> と <code>h.2</code> を渡すと、二つ目の証拠が得られます。これで内側の証明が終わります。外側では、元の不等式を示すために <code>hpos</code> が使えるようになりました。</p>
+      <p><code>h.2</code> は仮定の後半 <code>x &lt; Real.pi</code> です。\(0 < x < \pi\) で \(\sin x > 0\) だという定理に <code>h.1</code> と <code>h.2</code> を渡すと、二つ目の証拠が得られます。これで内側の証明が終わります。外側では、元の不等式を示すために <code>hpos</code> が使えるようになりました。</p>
       <pre class="goal" aria-label="この時点の証明状態"><code>hpos : 0 &lt; x * Real.sin x
 ⊢ 12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x)</code></pre>
     </div>
