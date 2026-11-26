@@ -115,6 +115,7 @@
       <li id="ref-v15">Xin et al. (2024). <a href="https://arxiv.org/abs/2408.08152v1">DeepSeek-Prover-V1.5: Harnessing Proof Assistant Feedback for Reinforcement Learning and Monte-Carlo Tree Search</a>. </li>
       <li id="ref-v2">Ren et al. (2025). <a href="https://arxiv.org/abs/2504.21801v2">DeepSeek-Prover-V2: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition</a>. </li>
     </ol>
+    なお、私も Lean 自体は勉強中なので、もし間違えていたら優しく教えていただけると幸いです。
     </p>
   </header>
 
@@ -207,12 +208,14 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
     apply mul_pos
     · exact h.1
 <span class="new-lines">    · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2</span></code></pre>
-      <p><code>h.2</code> は仮定の後半 <code>x &lt; Real.pi</code> です。\(0 < x < \pi\) で \(\sin x > 0\) だという定理に <code>h.1</code> と <code>h.2</code> を渡すと、二つ目の証拠が得られます。これで内側の証明が終わります。外側では、元の不等式を示すために <code>hpos</code> が使えるようになりました。</p>
-      <pre class="goal" aria-label="この時点の証明状態"><code>hpos : 0 &lt; x * Real.sin x
+      <p><code>Real.sin_pos_of_pos_of_lt_pi</code> は、Mathlib に収録されている「\(0 &lt; x &lt; \pi\) ならば \(\sin x &gt; 0\)」という定理です。<code>h.1</code> が \(0 &lt; x\)、<code>h.2</code> が \(x &lt; \pi\) の証拠なので、この二つを定理に渡すと \(0 &lt; \sin x\) の証明が得られます。これは二つ目のゴールそのものなので、<code>exact</code> で閉じられます。これで、<code>hpos</code> が使えるようになり、Lean 上の tactic state に <code>hpos : 0 &lt; x * Real.sin x</code> が追加されました。</p>
+      <pre class="goal" aria-label="この時点の証明状態"><code>x : ℝ
+h : 0 &lt; x ∧ x &lt; Real.pi
+hpos : 0 &lt; x * Real.sin x
 ⊢ 12 ≤ (9 * (x ^ 2 * Real.sin x ^ 2) + 4) / (x * Real.sin x)</code></pre>
     </div>
     <div class="proof-step">
-      <h3>6. 正の分母を払う</h3>
+      <h3>6. 両辺に \(x \sin x\) をかける</h3>
       <pre><code>import Mathlib
 
 theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
@@ -222,11 +225,11 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
     · exact h.1
     · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2
 <span class="new-lines">  rw [le_div_iff₀ hpos]</span></code></pre>
-      <p><code>rw</code> はゴールを書き換える指示です。<code>le_div_iff₀</code> に正値性の証拠 <code>hpos</code> を渡すと、分母を払った同値な不等式に書き換えられます。</p>
+      <p><code>rw</code> はゴールを書き換える指示です。Mathlib の <code>le_div_iff₀</code> に「\(0 < x < \pi\) において \(x \sin x > 0\) である」という証明済みの定理 <code>hpos</code> を渡すと、分母を払った同値な不等式に書き換えられます。</p>
       <pre class="goal" aria-label="この時点の証明状態"><code>⊢ 12 * (x * Real.sin x) ≤ 9 * (x ^ 2 * Real.sin x ^ 2) + 4</code></pre>
     </div>
     <div class="proof-step">
-      <h3>7. 平方の非負性で最後のゴールを閉じる</h3>
+      <h3>7. 証明完了</h3>
       <pre><code>import Mathlib
 
 theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
@@ -237,7 +240,7 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
     · exact Real.sin_pos_of_pos_of_lt_pi h.1 h.2
   rw [le_div_iff₀ hpos]
 <span class="new-lines">  nlinarith [sq_nonneg (3 * x * Real.sin x - 2)]</span></code></pre>
-      <p>ここでモデルが選んだのは、<code>sq_nonneg</code> で「<i>3x</i> sin <i>x</i> − 2 の二乗は非負」という事実を与える一手です。<code>nlinarith</code> が多項式を整理し、その事実から不等式を導きます。Lean Web でこの行の直後に <code>No goals</code> と出れば、元の定理の証明は完了です。</p>
+      <p>Mathlib の <code>sq_nonneg</code> は、「平方式は非負」という定理です。ここでは、\((3x \sin x − 2)^2\) > 0」を用いていることになります。<code>nlinarith</code> が多項式を整理し、\(9 x ^ 2 \sin x ^ 2 - 12 x \sin x + 4 > 0\) を導きます。Lean Web でこの行の直後に <code>No goals</code> と出れば、証明は完了です。</p>
       <pre class="goal" aria-label="この時点の証明状態"><code>No goals</code></pre>
     </div>
   </section>
