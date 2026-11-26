@@ -108,14 +108,18 @@
         理由はシンプルで、リーマン予想やらナビエ・ストークス方程式やらで Lean がものすごく注目されている一方で、本書での扱いはそこまで大きくありません。
         お恥ずかしながら、本書を執筆していた 2026 年 6 月時点ではヤコビ予想の反例も見つかっておらず、見開き 1 ページくらい割けば十分だと考えていました・・・
     </p>
-    <p>Lean と強化学習を組み合わせるアプローチが大きく注目されたのは、2024 年の国際数学オリンピックにおいて、Google DeepMind の AlphaProof 銀メダル相当の成績を収めたときです。
-        例のごとく、OpenAI や Anthropic の学習方法は公開されていないのですが、Google Deepmind や DeepSeek は論文を公開しているので、Lean がどのように用いられているのか、コアとなるアイデアについて本ブログでは解説します。
+    <p>例のごとく、OpenAI や Anthropic の最新モデルの学習方法は公開されていませんが、Lean と強化学習を使って数学力を向上させている可能性は高そうです。OpenAI は 2026 年 9 月、ナビエ・ストークス問題の証明を大規模な強化学習で訓練した内部モデルで探索し得られた証明を GPT-6 Astra で Lean に形式化して検証した、と報告しています。
+        <a href="https://openai.com/index/navier-stokes-solution/">OpenAI のナビエ・ストークス問題に関する発表</a>。
+    Anthropic も、Claude 4 の強化学習中に Lean で定理を証明させた例を公開しています。
+        <a href="https://www-cdn.anthropic.com/4263b940cabb546aa0e3283f35b686f4f3b2ff47.pdf">Claude 4 System Card §4.2.3</a>
+    </p>
+    <p>そこで本ブログでは、学習方法が論文で公開されている Google DeepMind の AlphaProof と DeepSeek-Prover を例に、Lean が強化学習の中でどんな役割を果たすのかを解説します。</p>
     <ol class="references">
       <li id="ref-alpha">Hubert et al. <a href="https://www.nature.com/articles/s41586-025-09833-y">Olympiad-level formal mathematical reasoning with reinforcement learning</a>. <i>Nature</i> 651, 607–613</li>
       <li id="ref-v15">Xin et al. (2024). <a href="https://arxiv.org/abs/2408.08152v1">DeepSeek-Prover-V1.5: Harnessing Proof Assistant Feedback for Reinforcement Learning and Monte-Carlo Tree Search</a>. </li>
       <li id="ref-v2">Ren et al. (2025). <a href="https://arxiv.org/abs/2504.21801v2">DeepSeek-Prover-V2: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition</a>. </li>
     </ol>
-    なお、私も Lean 自体はまだ勉強中なので、もし間違えていたら優しく教えていただけると幸いです。
+    <p>なお、私も Lean 自体はまだ勉強中なので、もし間違えていたら優しく教えていただけると幸いです。
     </p>
   </header>
 
