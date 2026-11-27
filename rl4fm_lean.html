@@ -254,7 +254,7 @@ theorem aime_1983_p9 (x : ℝ) (h : 0 &lt; x ∧ x &lt; Real.pi) :
 
   <section id="search">
     <h2>環境としての Lean</h2>
-    <p> AlphaProof や DeepSeek-Prover では Lean を強化学習の環境として用いています。Lean の tactic state（証明状態）が強化学習における状態であり、基盤モデル（方策）は「どのようなコードを出力するか」の行動を選択します。環境である Lean がこの行動を実行すると、新しいtactic state（証明状態）が得られます。<code>have hpos</code> の内側で \(x \sin x &gt; 0\) を示すのを例に、状態・行動が何に対応しているかを図示します。</p>
+    <p> AlphaProof や DeepSeek-Prover では Lean を強化学習の環境として用いています。Lean の tactic state（証明状態）が強化学習における状態であり、基盤モデル（方策）は「どのようなコードを出力するか」の行動を選択します。環境である Lean がこの行動を実行すると、新しい tactic state（証明状態）が得られます。<code>have hpos</code> の内側で \(x \sin x &gt; 0\) を示すのを例に、状態・行動が何に対応しているかを図示します。</p>
     <figure class="lean-loop">
       <p>現在の tactic state（証明状態） \(s_t\)</p>
       <pre class="goal"><code>x : ℝ
